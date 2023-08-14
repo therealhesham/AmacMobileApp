@@ -1,0 +1,83 @@
+import { useEffect, useState } from "react";
+
+
+import axios from "axios";
+import jwtDecode from "jwt-decode";
+import { useRef } from "react";
+import { Alert, Button, ImageBackground, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Picker } from "@react-native-picker/picker";
+import AutocompleteInput from "react-native-autocomplete-input";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+
+
+
+
+
+
+function PostNewDataToMainWarehouse(){
+
+const [items,setItems] = useState("")
+const [store,setStore]=useState("")
+const [type,setType]=useState("")
+const [Quantity,setQuantity]=useState("")
+const [error,setError]= useState("")
+const [success,setSuccess]= useState()
+const clear=()=>{
+    setItems("")
+    setStore("مخزن بني مزار الرئيسي")
+    setType("")
+    setQuantity("")
+    setError(null)
+    setSuccess("تم تسجيل البيانات بنجاح")
+    }
+    
+const PostHandler = (e)=>{
+    e.preventDefault()
+    
+axios.post(" https://0a02-196-133-9-14.ngrok-free.app/postnewdatatostore",{items:items,store:store,type:type,quantity:Quantity},{withCredentials:true}).
+then(e=>e.data == "success" ? clear() :setError("يرجى مراعاة ادخال البيانات الصحيحة"))
+
+}
+
+
+return(
+
+<View style={{paddingTop:120,backgroundColor:"white",margin:10}}> 
+    
+<Text style={{fontSize:19,textAlign:"center",color:"#D71313"}}>تسجيل بيانات الجرد</Text>
+<TextInput cursorColor="#D71313" focusable style={{paddingBottom:20}}  placeholder="المخزن" value={store} onChangeText={(e)=>setStore(e)}/>
+<TextInput cursorColor="#D71313" style={{paddingBottom:20}} placeholder="المهام"  value={items} onChangeText={(e)=>setItems(e)}/>
+<TextInput cursorColor="#D71313" style={{paddingBottom:20}}  placeholder="الوحدة"  value={type} onChangeText={(e)=> setType(e)}/>
+
+
+<TextInput cursorColor="#D71313" style={{paddingBottom:20}} value={Quantity} placeholder="الكمية" keyboardType="number-pad" onChangeText={e=>setQuantity(e)}/>
+<TouchableOpacity style={{width:300,flexDirection:"row",justifyContent:"center",alignItems:"center" }}><Button color="#D71313" title="تسجيل البيانات" onPress={PostHandler}>تسجيل بيانات</Button></TouchableOpacity>
+
+{error ? <Text style={{color:"red"}} >خطأ في ادخال البيانات</Text>:null}
+{success ? <Text style={{color:"black"}}>تم تسجيل البيانات بنجاح</Text>:null}
+
+
+</View>
+
+
+
+
+
+
+
+
+
+)
+
+}
+
+
+
+
+
+
+
+
+
+export default PostNewDataToMainWarehouse;

@@ -1,0 +1,79 @@
+import axios from "axios";
+// AppState
+import { useContext, useEffect, useState } from "react";
+import { View,Text, TextInput, SafeAreaView, TouchableOpacity, Dimensions, I18nManager, KeyboardAvoidingView, StyleSheet, Button, AppState } from "react-native";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import auth from "./context";
+import { MailOutlined } from "@ant-design/icons";
+import jwtDecode from "jwt-decode";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+const Login = (props) => {
+
+    const [email,setEmail]=useState("")
+    const [password,setPassword]=useState("")
+    const contextUser=useContext(auth)
+    
+
+    const [error,setError]=useState()
+    const storage= async ()=>{
+try {
+    
+} catch (error) {
+    
+}
+        
+    }
+            // useEffect(()=>
+            // jwtDecode(await AsyncStorage.getItem("authtoken"))? props.navigation.navigate("Preview"):null
+            
+            // )
+    const postData    =async()=>{
+
+await axios.post("https://0a02-196-133-9-14.ngrok-free.app/login",{email,password}).then(({data})=>{data.authtoken?AsyncStorage.setItem("authToken",data.authtoken):console.log("no data")}).catch(e=>console.log("error from catch"))
+    // await fetch("http://b8d8-196-133-9-14.ngrok-free.app/login",
+    // {method:"POST",  headers: {
+    //     'Accept': 'application/json',
+    //     'content-type': 'application/json'
+    //   },body:{email,password},credentials:true}).then((e)=>console.log(e.json))
+    
+{await AsyncStorage.getItem("authToken")?props.navigation.replace("Home"):setError("خطأ في البيانات")}
+    // if(contextUser.user) return props.navigation.navigate("Preview")
+    // if(!contextUser.user)
+
+}
+const dim = Dimensions.get("screen").height/2
+// I18nManager.allowRTL(false)
+
+return ( <SafeAreaView>
+    
+    <Text>Login
+        
+    </Text>
+    <TouchableOpacity style={{backgroundColor:"wheat"}}>
+ <KeyboardAvoidingView   behavior="position" keyboardVerticalOffset={200} style={styles.container}>
+ 
+ <TextInput placeholder= "Email"  value={email} onChangeText={(e)=>setEmail(e)}
+  style={{  borderRadius:19, backgroundColor: "white" , width:300 , height:35 , marginBottom:10}} secureTextEntry={false} />   
+ <TextInput placeholder="Password" value={password} 
+ onChangeText={(e)=>setPassword(e)} 
+ style={{  borderRadius:19, backgroundColor: "white" , width:300 , height:35,marginBottom:10}}
+  secureTextEntry={true} />
+<View>{error?<Text style={{color:"red"}}>{error}</Text> :null}</View>
+ <Button title="Submit" style={{width:"50 px"}} onPress={postData} ></Button>
+ </KeyboardAvoidingView>
+ </TouchableOpacity>
+    
+
+
+     </SafeAreaView> );
+
+
+}
+const styles = StyleSheet.create({container:
+
+    {paddingTop: Dimensions.get("screen").height/2,width:100,paddingLeft: 20 , backgroundColor:"red",flexDirection:"column",alignItems:"flex-start"
+
+}
+}) 
+export default Login;
