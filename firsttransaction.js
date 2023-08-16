@@ -193,7 +193,7 @@ onValueChange={(itemValue, itemIndex) =>
     setItem(itemValue)
 }  >
 
-{useNameStoreContext.storeName.map(e=><Picker.Item label={e.name} key={e._id} value={e.name}/>)}
+{useNameStoreContext.storeName.map(e=><Picker.Item label={e} key={e} value={e}/>)}
 
 
 </Picker>
@@ -202,7 +202,7 @@ onValueChange={(itemValue, itemIndex) =>
 <Picker
 // onFocus={openUnitRef}
 // onBlur={closeUnitRef}
-ref={pickUnitRef}
+// ref={pickUnitRef}
 selectedValue={type}
 onValueChange={(itemValue, itemIndex) =>
     setType(itemValue)

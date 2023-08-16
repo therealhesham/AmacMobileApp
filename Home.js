@@ -15,13 +15,14 @@ const [store,setStore]=useState()
 const [padding,setPadding]=useState(20)
 const storageFn =async ()=>{
 try {
+
   const storage =await AsyncStorage.getItem("authToken")
 const nameOfAuth = jwtDecode(storage)
 setAuth(nameOfAuth)
   setStore(storage)
   setPadding(90)  
 } catch (error) {
-  console.log(error)
+  console.log("error")
 }
 
 } 
@@ -29,10 +30,11 @@ useEffect(()=>
 {
 storageFn()
 })
+console.log(username)
 // const naivgate = Navigation()
 const backgroundImageSource={uri:"./assets/download.jpg"}
   return (
-    <View style={styles.container}>
+    <View style={styles.container} >
      <ImageBackground style={styles.ImageBackground} resizeMode='center'   
      
      source={require('./assets/download.jpg')}
@@ -41,7 +43,7 @@ const backgroundImageSource={uri:"./assets/download.jpg"}
 <TouchableOpacity style={{width:dimension.width-12,paddingBottom:padding,gap:9}}>
 
      
-      {username ?<View><Button  title="تسجيل الجرد" color="purple"  onPress={()=>props.navigation.navigate('Postnewdata')} style={{paddingBottom:10}}/>
+      {username ?<View style={{gap:3}}><Button  title="تسجيل الجرد" color="purple"   onPress={()=>props.navigation.navigate('Postnewdata')} style={{paddingBottom:10}}/>
     <Button  title="جرد اذن المخازن" color="purple"  onPress={()=>props.navigation.navigate('Preview')} style={{paddingBottom:10}}/>
     <Button  title="تسجيل اذن مرتجع" color="purple"  onPress={()=>props.navigation.navigate('Fourth')} style={{paddingBottom:10}}/>
 
@@ -69,6 +71,7 @@ const backgroundImageSource={uri:"./assets/download.jpg"}
 
 const styles = StyleSheet.create({
   container: {
+    // gap:3,
     flex: 1,
     backgroundColor: '#fff',
     // alignItems: 'center',
