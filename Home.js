@@ -3,11 +3,11 @@ import { StatusBar } from 'expo-status-bar';
 import jwtDecode from 'jwt-decode';
 import { useEffect, useState } from 'react';
 // import "../"
-
+import { REACT_APP_DEV_MODE, REACT_APP_PROD_MODE } from "@env"
 import { Button, Dimensions, Image, ImageBackground, StyleSheet, Text, Touchable, TouchableOpacity, View } from 'react-native';
 export default function HomeScreen(props) {
 const dimension = Dimensions.get("screen")
-console.log(dimension)
+// console.log(dimension)
 const [{username},setAuth]=useState("")
 const [store,setStore]=useState()
 
@@ -42,9 +42,16 @@ const backgroundImageSource={uri:"./assets/download.jpg"}
 
      
       {username ?<View><Button  title="تسجيل الجرد" color="purple"  onPress={()=>props.navigation.navigate('Postnewdata')} style={{paddingBottom:10}}/>
-    <Button  title="المخزن" color="purple"  onPress={()=>props.navigation.navigate('Preview')} style={{paddingBottom:10}}/>
-    <Button  title="ادخال منصرف" color="red" onPress={()=>props.navigation.navigate('Secondtransaction')} />
-    <Button  title="ادخال بيانات وارد" color="#F5D329" onPress={()=>props.navigation.navigate('FirstHandleRoute')} style={{paddingBottom:40}}/></View>
+    <Button  title="جرد اذن المخازن" color="purple"  onPress={()=>props.navigation.navigate('Preview')} style={{paddingBottom:10}}/>
+    <Button  title="تسجيل اذن مرتجع" color="purple"  onPress={()=>props.navigation.navigate('Fourth')} style={{paddingBottom:10}}/>
+
+
+    <Button  title="تسجيل اذن تحويل" color="red" onPress={()=>props.navigation.navigate('Thirdtransaction')} />
+
+    <Button  title="تسجيل اذن منصرف" color="red" onPress={()=>props.navigation.navigate('Secondtransaction')} />
+    <Button  title="تسجيل اذن وارد" color="#F5D329" onPress={()=>props.navigation.navigate('FirstHandleRoute')} style={{paddingBottom:40}}/></View>
+    
+    
     :
     <View>
     <Button  title="LogIn" color="red" onPress={()=>props.navigation.navigate('Login')} />

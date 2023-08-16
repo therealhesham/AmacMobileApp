@@ -1,6 +1,6 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-
+import { RootSiblingParent } from 'react-native-root-siblings';
 import { StatusBar } from 'expo-status-bar';
 import HomeScreen from './Home';
 import { AppRegistry, StyleSheet } from 'react-native';
@@ -14,6 +14,8 @@ import FirstTransaction from './firsttransaction';
 import PostNewDataToMainWarehouse from './newdata';
 import { contractorsContext, Datacontext, storeNamesContext } from './datacontext';
 import Secondtransaction from './secondtransaction';
+import Thirdtransaction from './thirdtransaction';
+import Fourth from './fourthtransacion';
 
 // import "./assets"
 // StyleSheet
@@ -60,13 +62,15 @@ useEffect(()=>{
     // }
     // fetch()
     }
-
+    
 
 
 ,[])
+
 console.log(data)
 
 return (
+  // <RootSiblingParent>
   <storeNamesContext.Provider value={{storeName,setStoreNames}}>
   <Datacontext.Provider value={{data,setContextData}}>
   <contractorsContext.Provider value={{contractor,setContractor}}>
@@ -74,12 +78,15 @@ return (
 <NavigationContainer>
 <Stack.Navigator initialRouteName='Home' screenOptions={{title:null}} > 
 <Stack.Screen  name="FirstHandleRoute"  component={FirstTransaction} />
+<Stack.Screen  name="Thirdtransaction"  component={Thirdtransaction} />
 <Stack.Screen name="Details"  component={HomeScreen} />
 <Stack.Screen name="Home" component={HomeScreen} />
+<Stack.Screen name="Fourth" component={Fourth} />
 <Stack.Screen name="Login" component={Login} />
 <Stack.Screen name="Postnewdata" component={PostNewDataToMainWarehouse} />
 <Stack.Screen  name="Preview" component={Preview}/>
 <Stack.Screen  name="Secondtransaction" component={Secondtransaction}/>
+
 
 </Stack.Navigator>
 
@@ -88,6 +95,7 @@ return (
 </contractorsContext.Provider>
 </Datacontext.Provider>
 </storeNamesContext.Provider>
+
 );
 }
 

@@ -67,9 +67,7 @@ settypeOfContracting("")
     
 
 const getSpecificData =async (e)   =>{
-    // alert(destination)
-    console.log(from);
-console.log(`https://0a02-196-133-9-14.ngrok-free.app/specificdatas/${from}`)
+
     await   axios.get(`https://0a02-196-133-9-14.ngrok-free.app/specificdatas/${from}`).then((e)=>setToGetSpecificITems(e.data)).catch(e=>console.log(e))
     // console.log(destination);
     
