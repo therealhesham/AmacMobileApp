@@ -30,7 +30,7 @@ useEffect(()=>
 {
 storageFn()
 })
-console.log(username)
+// console.log(username)
 // const naivgate = Navigation()
 const backgroundImageSource={uri:"./assets/download.jpg"}
   return (

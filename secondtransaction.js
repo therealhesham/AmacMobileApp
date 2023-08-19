@@ -1,6 +1,6 @@
 import { Picker } from "@react-native-picker/picker";
 import { useContext, useState } from "react";
-import { Button, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Button, SafeAreaView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { Datacontext, contractorsContext, storeNamesContext } from "./datacontext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import jwtDecode from "jwt-decode";
@@ -39,7 +39,7 @@ const postHandler =async(e)=>{
         
         if (!from ||  !type || !typeOfImporter || !lOcation  ||!quantity || !items|| !receipt  ) return setExistense("رجاء ملىء البيانات")
         
-        await axios.post("https://0a02-196-133-9-14.ngrok-free.app/secondtransaction",{store:from,typeOfImporter:typeOfImporter,
+        await axios.post(`${process.env.REACT_APP_BASE_URL}/secondtransaction`,{store:from,typeOfImporter:typeOfImporter,
             contractor:contractor,typeOfContracting:typeOfContracting,
             items:items,location:lOcation,quantity:quantity,receiptno:receipt,unit:type}).then(e=>
                e.data == "error" ? setExistense("خطأ في التسجيل ... المهام غير متاحة بالمخزن") :
@@ -68,13 +68,13 @@ settypeOfContracting("")
 
 const getSpecificData =async (e)   =>{
 
-    await   axios.get(`https://0a02-196-133-9-14.ngrok-free.app/specificdatas/${from}`).then((e)=>setToGetSpecificITems(e.data)).catch(e=>console.log(e))
+    await   axios.get(`${process.env.REACT_APP_BASE_URL}/specificdatas/${from}`).then((e)=>setToGetSpecificITems(e.data)).catch(e=>console.log(e))
     // console.log(destination);
     
  }
 
     return (  
-    <View>
+    <SafeAreaView style={{backgroundColor:"white"}}>
 
 <TextInput  keyboardType="numeric" value={receipt} placeholder="رقم الاذن" onChangeText={e=>setReceipt(e)}/>
 
@@ -229,7 +229,7 @@ value={quantity} onChangeText={e=>setQuantity(e)}/>
 
 
 
-    </View>);
+    </SafeAreaView>);
 }
  
 export default Secondtransaction;

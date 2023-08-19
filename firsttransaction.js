@@ -9,12 +9,30 @@ import { Picker } from "@react-native-picker/picker";
 import AutocompleteInput from "react-native-autocomplete-input";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Datacontext, storeNamesContext } from "./datacontext";
-
+import Toast from 'react-native-toast-message'
 
 export default function FirstTransaction(props){
+  const toasterExistance= (e)=>{
+    setExistense(e);
+  Toast.show({text1:e,type:"error"});
+  }
 
+  const Clear =()=>{
+    // setDone("تم تسجيل البيانات بنجاح") 
+setFrom("")
+setTo("")
+setExistense("")
+setType("")
+setQuantity("")
+setItem("")
+}
+  const toasterDone =(e)=>{
+Clear()
+setDone("تم تسجيل البيانات بنجاح")
+Toast.show({text:e,type:"success"})
+  }
 const ref = useRef(0)
-    const [transactionType,setTransactionType]=useState("")
+const [transactionType,setTransactionType]=useState("")
 const[from,setFrom]=useState("")
 const refFocus =useRef()
 const[to,setTo]=useState("")
@@ -23,7 +41,7 @@ const [unit,setUnit]=useState([])
 const [quantity,setQuantity]=useState(0)
 const [destination ,setDestination ] =useState("")
 const [item,setItem]=useState("")
-const [notExist,setExistense]=useState("")
+const [notExist,setExistense]=useState(null)
 const [store,setStore]=useState(destination)
 const pickerRef = useRef();
 
@@ -38,24 +56,13 @@ const [fromList,setFromList]=useState([])
   const [data,setData]=useState([])
 const [done,setDone]=useState("")
 const [alert,setAlert] = useState("")
-const [receipt,setReceipt]=useState()
+const [receipt,setReceipt]=useState(null)
 const [specificitems,setToGetSpecificITems]=useState([])
-const [specificUnite,setSpecificUnite]=useState()
+const [specificUnite,setSpecificUnite]=useState({})
 const usecontext = useContext(Datacontext)
 const useNameStoreContext=useContext(storeNamesContext)
 
 
-
-console.log(usecontext)
-const Clear =()=>{
-    setDone("تم تسجيل البيانات بنجاح") 
-setFrom("")
-setTo("")
-setExistense("")
-setType("")
-setQuantity("")
-setItem("")
-}
 const [word,setWord]=useState()
 const [searchedData,setSearchData]=useState([]);
  const Search = (E)=>{
@@ -72,32 +79,29 @@ console.log(mapper)
         }
 
 
-useEffect( ()=>{
-if (ref.current  == 0) 
-{  
+// useEffect( ()=>{
+// if (ref.current  == 0) 
+// {  
 
-fetch("https://0a02-196-133-9-14.ngrok-free.app/preview",{method:"get"}).then(e=>e.json()).then(e=>setData(e))
-// console.log(ref.current  == 0)
-const arr=[];
-const unitArr = []
+// fetch(`http://192.168.8.168:3000/preview`,{method:"get"}).then(e=>e.json()).then(e=>setData(e))
+// // console.log(ref.current  == 0)
+// const arr=[];
+// const unitArr = []
 
-//    data.forEach(e=> {if (!arr.includes(e.store)) return  setFromList([...fromList,e.store])}) 
+// //    data.forEach(e=> {if (!arr.includes(e.store)) return  setFromList([...fromList,e.store])}) 
     
-// setFromList(arr)
-//    data.forEach(e=> {if (!unitArr.includes(e.type)) return unitArr.push(e.type)})
-//    fromList.length == 0 ?console.log(fromList):""
-}
-else {console.log(ref.current  == 0)}
-},[])
+// // setFromList(arr)
+// //    data.forEach(e=> {if (!unitArr.includes(e.type)) return unitArr.push(e.type)})
+// //    fromList.length == 0 ?console.log(fromList):""
+// }
+// else {console.log(ref.current  == 0)}
+// },[])
 
 
 
 
 
 
-// console.log(fromList)
-console.log(ref.current)
-console.log(fromList)
 
 const pickUnitRef= useRef();
 
@@ -119,33 +123,52 @@ function closeDestinationRef() {
   pickerRefDestination.current.blur();
 }
 
-const source = ["القاهرة", "اسماء مصانع", "مشتريات"]
+const source = [{SOURCE:"القاهرة",id:1}, {SOURCE:"مصنع",id:2}, {SOURCE:"مشتريات",id:3}]
 const postHandler =async(e)=>{
     // e.preventDefault()
+    try {
     const find = await AsyncStorage.getItem("authToken")
     const details = jwtDecode(find)
-    
-    if (!from ||  !type || !quantity || !destination || !item || !receipt ) return setExistense("رجاء ملىء البيانات")
-    await axios.post("https://0a02-196-133-9-14.ngrok-free.app/transactionexport",
+    console.log({from,type,receipt,quantity,destination,item})
+    if (!from ||  !type || !quantity || !destination || !item || !receipt ) return toasterExistance("رجاء التأكد من ملىء جميع البيانات المطلوبة");
+    await axios.post(`http:/192.168.1.8:3000/transactionexport`,
     {source:from,destination:destination,unit:type,quantity:quantity,items:item,receiptno:receipt,user:details.uername}).
     then(e=>{
-        e.data == "error" ? setExistense("خطأ في تسجيل البيانات .. المهام غير متاحة بالمخزن او قد تكون اخترت وحدة غير مناسبة لقائمة الجرد..من فضلك الرجوع لقائمة الجرد من هنا ") : Clear()})
+        e.data == "error" ? toasterExistance("خطأ في تسجيل البيانات .. المهام غير متاحة بالمخزن او قد تكون اخترت وحدة غير مناسبة لقائمة الجرد..من فضلك الرجوع لقائمة الجرد من هنا ") : toasterDone("تم تسجيل البيانات بنجاح")})
+      
+    } catch (error) {
+      
+    }
     
     }
- const getSpecificData =(e)   =>{
-    
+ const getSpecificData = async (e)   =>{
+  
+  try {
+    setDestination(e)
+  
 
-    axios.post("https://0a02-196-133-9-14.ngrok-free.app/specificdata",{store:destination}).then((e)=>setToGetSpecificITems(e.data)).catch(e=>console.log(e))
+     await axios.post(`http:/192.168.1.8:3000/specificdata`,{store:e}).then((e)=>setToGetSpecificITems(e.data))
+  } catch (error) {
+    console.log("error")
+  }
+  
     
  }
-        
+    
+ const getSpecificUnite=async(e)=>{
+  setItem(e)
+
+  await axios.post(`http:/192.168.1.8:3000/specificunit`,{items:e}).then((e)=>setSpecificUnite(e.data)).catch(e=>console.log(e))
+
+
+ }
 return(
 
 <View style={{paddingTop:60 ,backgroundColor:"#FFFAE3",flex:1,justifyContent:"flex-start"}}>
 
 
     
-<TextInput style={{ color:"black",opacity:1}}  placeholder="رقم الاذن" value={receipt} onChangeText={e=>setReceipt(e)}/>
+<TextInput style={{ color:"black",opacity:1 ,right:"auto"}}  placeholder="رقم الاذن" keyboardType="numeric" value={receipt} onChangeText={e=>setReceipt(e)}/>
 
 
 
@@ -153,29 +176,29 @@ return(
 //   onBlur={closeRefPicker}
 //   onFocus={openRefPicker}
 
-  ref={pickerRef}
+  // ref={pickerRef}
   selectedValue={from}
   onValueChange={(itemValue, itemIndex) =>
     setFrom(itemValue)
   }>
-
-{source.map(e=><Picker.Item label={e} value={e} /> )  }
+<Picker.Item label="اختر من القائمة"  enabled={false} key={1}  />
+{source.map((e,index)=><Picker.Item label={e.SOURCE}  value={e.SOURCE} key={e.id}  /> )  }
   
 </Picker>
 
  <Picker
- onBlur={closeDestinationRef}
+ 
   ref={pickerRefDestination}
   selectedValue={destination}
   onValueChange={(itemValue, itemIndex) =>
-    setDestination(itemValue)
-  } 
+    getSpecificData(itemValue)
+} 
    
    >
   
   
 
-{usecontext.data.map((e)=><Picker.Item  label={e.items} value={e.items} />)}
+{useNameStoreContext.storeName.map((e)=><Picker.Item  label={e} value={e} key={e}/>)}
 
 
 
@@ -186,14 +209,14 @@ return(
 // onFocus={openUnitRef}
 
 
-onBlur={closeUnitRef}
+// onBlur={closeUnitRef}
 ref={pickUnitRef}
 selectedValue={item}
 onValueChange={(itemValue, itemIndex) =>
-    setItem(itemValue)
+  getSpecificUnite(itemValue)
 }  >
-
-{useNameStoreContext.storeName.map(e=><Picker.Item label={e} key={e} value={e}/>)}
+<Picker.Item label="اختر من القائمة"  enabled={false} key={1}  />
+{specificitems.map(e=><Picker.Item label={e.items} key={e._id} value={e.items}/>)}
 
 
 </Picker>
@@ -210,14 +233,11 @@ onValueChange={(itemValue, itemIndex) =>
 }  
 
 
->
+><Picker.Item label="اختر من القائمة"  enabled={true} key={1}  />
+
+{specificUnite?<Picker.Item label={specificUnite.type} key={specificUnite._id} value={specificUnite.type}/>:""}
 
 
-
-<Picker.Item label="م/ط" key={1} value="م/ط"/>
-<Picker.Item label="عدد" key={2} value="عدد"/>
-
-<Picker.Item label="طن" value="طن"  key={3}/>
 
 
 
@@ -228,12 +248,19 @@ onValueChange={(itemValue, itemIndex) =>
 </View>
 
 
-<TextInput placeholder="ادخل الكمية  " style={{height:100 , opacity:1}} keyboardType="numeric" onValueChange={e=>setQuantity(e)} value={quantity}/>
-{ notExist ? <Text  style={{color:"red"}}>{notExist}</Text>
-    :null}
-    { done ?  <Text>تم ادخال البيانات بنجاح</Text>  :null} 
+<TextInput placeholder="ادخل الكمية  " style={{height:100 , opacity:1}} keyboardType="numeric" onChangeText={e=>setQuantity(e)} value={quantity}/>
+{ notExist ? <Toast 
+        position='top'
+        topOffset={3}
 
-<Button color="purple" title="تسجيل البيانات" onPress={postHandler} >تسجيل بيانات</Button> 
+      />:null}
+    { done ? <Toast 
+        position='top'
+        topOffset={3}
+
+      /> :null} 
+
+<Button color="red" title="تسجيل البيانات" onPress={postHandler} /> 
 
 {/* <button style={{backgroundColor:"blue",color:"white"}} onClick={postHandler}>تسجيل بيانات</button> */}
 

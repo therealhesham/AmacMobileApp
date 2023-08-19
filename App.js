@@ -20,7 +20,7 @@ import Fourth from './fourthtransacion';
 // import "./assets"
 // StyleSheet
 // AppRegistry
-const BASE_URL =process.env.BASE_URL;
+const BASE_URL =process.env.REACT_APP_BASE_URL;
 
 export default function App() {
 const [user,setUser]=useState()
@@ -34,16 +34,16 @@ useEffect(()=>{
   
     const fetchData = async()=>{
     
-       await fetch(`https://0a02-196-133-9-14.ngrok-free.app/Preview`,{method:"get"}).then(e=>e.json()).then(e=> setContextData(e))
+       await fetch(`${BASE_URL}/preview`,{method:"get"}).then(e=>e.json()).then(e=> setContextData(e))
     }
     
     const fetchNames = async()=>{
     
-      await fetch(`https://0a02-196-133-9-14.ngrok-free.app/listofnames`,{method:"get"}).then(e=>e.json()).then(e=> setContractor(e))
+      await fetch(`${BASE_URL}/listofnames`,{method:"get"}).then(e=>e.json()).then(e=> setContractor(e))
     }
     const fetchStores = async()=>{
     
-      await fetch(`https://0a02-196-133-9-14.ngrok-free.app/listofstores`,{method:"get"}).then(e=>e.json()).then(e=> setStoreNames(e))
+      await fetch(`https:/192.168.1.8:3000/listofstores`,{method:"get"}).then(e=>e.json()).then(e=> setStoreNames(e))
     }
     try {
       fetchData();
@@ -67,7 +67,7 @@ useEffect(()=>{
 
 ,[])
 
-console.log(data)
+
 
 return (
   // <RootSiblingParent>
