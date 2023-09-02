@@ -29,12 +29,17 @@ const [storeList,setToStoreList]=useState([]);
 const storeContext=useContext(storeNamesContext)
 
     // Toast.hide({text1:done,type:"success"})
-        console.log(notExist)
+        
 
-const toasterExistance= ()=>{setExistense("من فضلك غير احد المخزنين")
-Toast.show({text1:notExist,type:"error"})
+const toasterExistance= (e)=>{setExistense(e)
+Toast.show({text1:e,type:"error"})
 }
 
+function toasterDone(e){
+    Clear()
+    setDone(e)
+    Toast.show({text1:e,type:"success"})
+      }
 const postHandler = (e)=>{
 
 // try {
@@ -45,14 +50,14 @@ const postHandler = (e)=>{
 // }
     // const find = await AsyncStorage.getItem("authToken")
     // const details = jwtDecode(find)
-// if (!from ||  !to || !quantity || !type || !items || !receipt ) return  setExistense("رجاء ملىء البيانات")
-if (from === to )   return toasterExistance() ;
- axios.post(`https://0a02-196-133-9-14.ngrok-free.app/thirdtransaction`,{receiptno:receipt,from:from,to:to,items:items,type:type,quantity:quantity}).then(e=>
-    e.data == "error" ? setExistense("  خطأ في التسجيل ... المهام غير متاحة بالمخزن المحول اليه او قد يكون الكمية في المخزن المحول منه اقل من المطلوب ") : Clear())
+if (!from ||  !to || !quantity || !type || !items || !receipt ) return  toasterExistance("رجاء ملىء البيانات")
+if (from === to )   return toasterExistance("غير المخزن المحول منه او له") ;
+ axios.post(`${process.env.REACT_APP_BASE_URL}/thirdtransaction`,{receiptno:receipt,from:from,to:to,items:items,type:type,quantity:quantity}).then(e=>
+    e.data == "error" ? toasterExistance("  خطأ في التسجيل ... المهام غير متاحة بالمخزن المحول اليه او قد يكون الكمية في المخزن المحول منه اقل من المطلوب ") : toasterDone("تم تسجيل البيانات بنجاح"))
     
 }
 
-const getSpecificData = (e)   =>{
+const getSpecificData =  (e)   =>{
     // alert(destination)
     setFrom(e)
 // ss
@@ -60,7 +65,7 @@ const getSpecificData = (e)   =>{
     // console.log(destination);
    
  }
- const Clear =()=>{
+ function Clear (){
     setDone("تم تسجيل البيانات بنجاح") 
     setFrom("")
     setReceipt("")
@@ -177,14 +182,14 @@ onValueChange={(itemValue, itemIndex) =>
     <Button color="#D71313" title="تسجيل البيانات"   onPress={postHandler}/>
     {/* </TouchableOpacity> */}
     
-{ notExist ? <Toast 
-        position='bottom'
-        bottomOffset={3}
+{ notExist ? <Toast onPress={()=>Toast.hide()}
+        position='top'
+        topOffset={3}
 
       />:null}
-    { done ?    <Toast 
-        position='bottom'
-        bottomOffset={3}
+    { done ?    <Toast onPress={()=>Toast.hide()}
+        position='top'
+        topOffset={3}
       />:null} 
 
    

@@ -3,11 +3,14 @@ import { StarOutlined, StarFilled, MailOutlined } from '@ant-design/icons';
 
 import { create } from "apisauce";
 import axios, { Axios } from "axios";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Dimensions, FlatList, Pressable, SafeAreaView, Text, TouchableOpacity, View, useWindowDimensions } from "react-native";
+import { Datacontext } from './datacontext';
 // useEffectTe
 // Text
+
 const Preview = () => {
+const user=useContext(Datacontext)
     const [data,setData]=useState([])
 // create("")
 const getter = async()=>{
@@ -17,8 +20,10 @@ const fff =await Network.getIpAddressAsync()
 }
 getter()
 
+
+
     useEffect(()=>{
-      fetch("https://0a02-196-133-9-14.ngrok-free.app/preview",{method:"get"}).then(e=>e.json()).then(e=>setData(e))
+      fetch(`${process.env.REACT_APP_BASE_URL}/preview`,{method:"get"}).then(e=>e.json()).then(e=>setData(e))
 //   .get('/').then(response => console.log(response))//
 //   .then(e=>console.log(e))
         
@@ -51,9 +56,9 @@ return (<SafeAreaView style={{width:Dimensions.get("screen")
 }}>
     <View style={{backgroundColor:"f3a920",opacity:.2,height:26,paddingRight:5,justifyContent:"center",alignItems:"center",alignContent:"center"}}>
 <Text >المتاح في المخازن</Text></View>
-{data.length>0 &&<FlatList
+{user.data.length>0 &&<FlatList
 refreshing={refreshing}
-onRefresh={()=>setData([...data])}
+onRefresh={()=>setData([...user.data])}
 data={data}
 renderItem={e=> <ItemComponents  id={e.item._id} itemData={e.item.items} quantity={e.item.quantity} store={e.item.store}/>}
 keyExtractor={(e,index)=>e._id}/>

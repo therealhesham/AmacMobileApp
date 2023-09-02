@@ -12,12 +12,24 @@ import { Datacontext, storeNamesContext } from "./datacontext";
 import Toast from 'react-native-toast-message'
 
 export default function FirstTransaction(props){
+  
   const toasterExistance= (e)=>{
     setExistense(e);
   Toast.show({text1:e,type:"error"});
-  }
+  // setFrom("")
+  // setTo("")
+  // setExistense("")
+  // setType("")
+  // setQuantity("")
+  // setItem("")
 
-  const Clear =()=>{
+}
+  const toasterDone =(e)=>{
+    Clear()
+    setDone(e)
+    Toast.show({text:e,type:"success"})
+      }
+  function Clear (){
     // setDone("تم تسجيل البيانات بنجاح") 
 setFrom("")
 setTo("")
@@ -26,11 +38,21 @@ setType("")
 setQuantity("")
 setItem("")
 }
-  const toasterDone =(e)=>{
-Clear()
-setDone("تم تسجيل البيانات بنجاح")
-Toast.show({text:e,type:"success"})
-  }
+function clearProps(){
+setFrom("")
+setTo("")
+setExistense("")
+setType("")
+setQuantity("")
+setItem("")
+}
+
+
+//   const toasterDone =(e)=>{
+// Clear()
+// setDone("تم تسجيل البيانات بنجاح")
+// Toast.show({text:e,type:"success"})
+//   }
 const ref = useRef(0)
 const [transactionType,setTransactionType]=useState("")
 const[from,setFrom]=useState("")
@@ -43,18 +65,18 @@ const [destination ,setDestination ] =useState("")
 const [item,setItem]=useState("")
 const [notExist,setExistense]=useState(null)
 const [store,setStore]=useState(destination)
-const pickerRef = useRef();
+const receiptRef = useRef();
 
-function openRefPicker() {
-  pickerRef.current.focus();
+function receiptInputFocus() {
+  receiptRef.current.focus();
 }
 
 function closeRefPicker() {
-  pickerRef.current.blur();
+  receiptRef.current.blur();
 }
 const [fromList,setFromList]=useState([])
   const [data,setData]=useState([])
-const [done,setDone]=useState("")
+const [done,setDone]=useState(null)
 const [alert,setAlert] = useState("")
 const [receipt,setReceipt]=useState(null)
 const [specificitems,setToGetSpecificITems]=useState([])
@@ -129,9 +151,9 @@ const postHandler =async(e)=>{
     try {
     const find = await AsyncStorage.getItem("authToken")
     const details = jwtDecode(find)
-    console.log({from,type,receipt,quantity,destination,item})
+
     if (!from ||  !type || !quantity || !destination || !item || !receipt ) return toasterExistance("رجاء التأكد من ملىء جميع البيانات المطلوبة");
-    await axios.post(`http:/192.168.1.8:3000/transactionexport`,
+    await axios.post(`${process.env.REACT_APP_BASE_URL}/transactionexport`,
     {source:from,destination:destination,unit:type,quantity:quantity,items:item,receiptno:receipt,user:details.uername}).
     then(e=>{
         e.data == "error" ? toasterExistance("خطأ في تسجيل البيانات .. المهام غير متاحة بالمخزن او قد تكون اخترت وحدة غير مناسبة لقائمة الجرد..من فضلك الرجوع لقائمة الجرد من هنا ") : toasterDone("تم تسجيل البيانات بنجاح")})
@@ -147,7 +169,7 @@ const postHandler =async(e)=>{
     setDestination(e)
   
 
-     await axios.post(`http:/192.168.1.8:3000/specificdata`,{store:e}).then((e)=>setToGetSpecificITems(e.data))
+     await axios.post(`${process.env.REACT_APP_BASE_URL}/specificdata`,{store:e}).then((e)=>setToGetSpecificITems(e.data))
   } catch (error) {
     console.log("error")
   }
@@ -158,17 +180,17 @@ const postHandler =async(e)=>{
  const getSpecificUnite=async(e)=>{
   setItem(e)
 
-  await axios.post(`http:/192.168.1.8:3000/specificunit`,{items:e}).then((e)=>setSpecificUnite(e.data)).catch(e=>console.log(e))
+  await axios.post(`${process.env.REACT_APP_BASE_URL}/specificunit`,{items:e}).then((e)=>setSpecificUnite(e.data)).catch(e=>console.log(e))
 
 
  }
 return(
 
-<View style={{paddingTop:60 ,backgroundColor:"#FFFAE3",flex:1,justifyContent:"flex-start"}}>
+<View style={{padding:5 ,backgroundColor:"white",flex:1,justifyContent:"flex-start"}}>
 
 
     
-<TextInput style={{ color:"black",opacity:1 ,right:"auto"}}  placeholder="رقم الاذن" keyboardType="numeric" value={receipt} onChangeText={e=>setReceipt(e)}/>
+<TextInput ref={receiptRef} autoFocus onFocus={receiptInputFocus} style={{ color:"black",opacity:1 ,right:"auto"}}  placeholder="رقم الاذن" keyboardType="numeric" value={receipt} onChangeText={e=>setReceipt(e)}/>
 
 
 
@@ -215,7 +237,7 @@ selectedValue={item}
 onValueChange={(itemValue, itemIndex) =>
   getSpecificUnite(itemValue)
 }  >
-<Picker.Item label="اختر من القائمة"  enabled={false} key={1}  />
+<Picker.Item label=" اختر من القائمة المهام المطلوبة"  enabled={false} key={1}  />
 {specificitems.map(e=><Picker.Item label={e.items} key={e._id} value={e.items}/>)}
 
 
@@ -233,7 +255,7 @@ onValueChange={(itemValue, itemIndex) =>
 }  
 
 
-><Picker.Item label="اختر من القائمة"  enabled={true} key={1}  />
+><Picker.Item label=" اختر من القائمة الوحدة المناسبة"  enabled={true} key={1}  />
 
 {specificUnite?<Picker.Item label={specificUnite.type} key={specificUnite._id} value={specificUnite.type}/>:""}
 
@@ -248,10 +270,10 @@ onValueChange={(itemValue, itemIndex) =>
 </View>
 
 
-<TextInput placeholder="ادخل الكمية  " style={{height:100 , opacity:1}} keyboardType="numeric" onChangeText={e=>setQuantity(e)} value={quantity}/>
+<TextInput placeholder="ادخل الكمية  "  style={{height:100 , opacity:1}} keyboardType="numeric" onChangeText={e=>setQuantity(e)} value={quantity}/>
 { notExist ? <Toast 
         position='top'
-        topOffset={3}
+        topOffset={3} onHide={()=> clearProps()}
 
       />:null}
     { done ? <Toast 

@@ -8,8 +8,9 @@ import { MailOutlined } from "@ant-design/icons";
 import jwtDecode from "jwt-decode";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const Login = (props) => {
 
+const Login = (props) => {
+    const authenticate =useContext(auth)
     const [email,setEmail]=useState("")
     const [password,setPassword]=useState("")
     const contextUser=useContext(auth)
@@ -28,24 +29,29 @@ try {
             // jwtDecode(await AsyncStorage.getItem("authtoken"))? props.navigation.navigate("Preview"):null
             
             // )
+            
     const postData    =async()=>{
 
-await axios.post("https://0a02-196-133-9-14.ngrok-free.app/login",{email,password}).then(({data})=>{data.authtoken?AsyncStorage.setItem("authToken",data.authtoken):console.log("no data")}).catch(e=>console.log("error from catch"))
+await axios.post(`https://681a-197-59-186-85.ngrok-free.app/login`,{email,password}).
+then(({data})=>data.authtoken?authenticate.setUser(data.authtoken):setError("خطأ في البيانات")).
+catch(e=>console.log("error from catch"))
     // await fetch("http://b8d8-196-133-9-14.ngrok-free.app/login",
     // {method:"POST",  headers: {
     //     'Accept': 'application/json',
     //     'content-type': 'application/json'
     //   },body:{email,password},credentials:true}).then((e)=>console.log(e.json))
     
-{await AsyncStorage.getItem("authToken")?props.navigation.replace("Home"):setError("خطأ في البيانات")}
+// {await AsyncStorage.getItem("authToken")?props.navigation.replace("Home"):setError("خطأ في البيانات")}
     // if(contextUser.user) return props.navigation.navigate("Preview")
     // if(!contextUser.user)
 
 }
+
+
 const dim = Dimensions.get("screen").height/2
 // I18nManager.allowRTL(false)
 
-return ( <SafeAreaView>
+return ( <SafeAreaView >
     
     <Text>Login
         

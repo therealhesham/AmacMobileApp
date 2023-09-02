@@ -33,9 +33,9 @@ const clear=()=>{
     }
     
 const PostHandler = (e)=>{
-    e.preventDefault()
     
-axios.post(" https://0a02-196-133-9-14.ngrok-free.app/postnewdatatostore",{items:items,store:store,type:type,quantity:Quantity},{withCredentials:true}).
+    
+axios.post(`${process.env.REACT_APP_BASE_URL}/postnewdatatostore`,{items:items,store:store,type:type,quantity:Quantity},{withCredentials:true}).
 then(e=>e.data == "success" ? clear() :setError("يرجى مراعاة ادخال البيانات الصحيحة"))
 
 }

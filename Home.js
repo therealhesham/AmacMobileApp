@@ -40,7 +40,7 @@ const backgroundImageSource={uri:"./assets/download.jpg"}
      source={require('./assets/download.jpg')}
     //  source={backgroundImageSource}
      >
-<TouchableOpacity style={{width:dimension.width-12,paddingBottom:padding,gap:9}}>
+<TouchableOpacity  style={{width:dimension.width-12,paddingBottom:padding,gap:9}}>
 
      
       {username ?<View style={{gap:3}}><Button  title="تسجيل الجرد" color="purple"   onPress={()=>props.navigation.navigate('Postnewdata')} style={{paddingBottom:10}}/>
