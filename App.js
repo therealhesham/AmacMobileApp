@@ -88,7 +88,7 @@ if (status == "granted")
 }
 
 useEffect(()=>{
-
+GetToken()
 //  token() 
 //  sendtoken()
     const fetchData = async()=>{
@@ -145,15 +145,15 @@ function LoggedComponent (){
           swipeEdgeWidth:400,drawerActiveTintColor:"blue"
         }} >
         
-        <Drawer.Screen name="Login" component={Login} navigationKey='C'   />
+        
         <Drawer.Screen name='Home' component={PreviewPages} options={{headerTitle:"Home"}} />
-        <Drawer.Screen name="Preview" component={Preview} navigationKey='C' preview={data}  />
+        <Drawer.Screen name="عرض البيانات" component={Preview} navigationKey='C' preview={data}  />
         <Drawer.Screen name='ادخال اذن وارد' component={FirstTransaction} />
         <Drawer.Screen name="ادخال اذن منصرف" component={Secondtransaction} />
         <Drawer.Screen name="ادخال اذن تحويل " component={Thirdtransaction} />
-        <Drawer.Screen name="Details" component={HomeScreen} />
+        
         <Drawer.Screen name="ادخال اذن مرتجع " component={Fourth} />
-        <Drawer.Screen name="Postnewdata" component={PostNewDataToMainWarehouse} />
+        <Drawer.Screen name="اضافة مهام الى المخزن" component={PostNewDataToMainWarehouse} />
       
       
         
@@ -171,8 +171,13 @@ function LoggedComponent (){
   )
   
 }
+const [Logger,setLogger]=useState("")
+async function GetToken(){
+  const logger =await AsyncStorage.getItem("authToken")
+  setLogger(logger)
 
 
+}
 function LoginInComponent (){
   return (
 <NavigationContainer><auth.Provider value={{user,setUser}} ><Stack.Navigator><Stack.Screen name="Login" component={Login}/></Stack.Navigator></auth.Provider></NavigationContainer>
@@ -181,7 +186,7 @@ function LoginInComponent (){
 // {authName?<NavigationContainer independent={true}><Stack.Screen  name='Login' component={Login}/></NavigationContainer>:
 return (
 // 
-user?<LoggedComponent/>:<LoginInComponent/>
+Logger?<LoggedComponent/>:<LoginInComponent/>
 
 
 )

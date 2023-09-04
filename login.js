@@ -31,11 +31,26 @@ try {
             // )
             
     const postData    =async()=>{
+try {
+    
+    const {data} =await axios.post(`https://d021-196-133-126-25.ngrok-free.app/login`,{email,password})
+    await AsyncStorage.setItem("authToken",data.authtoken)
+    // AsyncStorage.clear()
 
-await axios.post(`https://681a-197-59-186-85.ngrok-free.app/login`,{email,password}).
-then(({data})=>data.authtoken?authenticate.setUser(data.authtoken):setError("خطأ في البيانات")).
-catch(e=>console.log("error from catch"))
-    // await fetch("http://b8d8-196-133-9-14.ngrok-free.app/login",
+    // then(({data})=>data.authtoken?AsyncStorage.setItem
+    
+    
+    
+    
+    // authenticate.setUser(AsyncStorage.getItem("authToken"))
+    console.log(await AsyncStorage.getItem("authToken"))
+    
+        
+} catch (error) {
+    
+}
+
+// await fetch("http://b8d8-196-133-9-14.ngrok-free.app/login",
     // {method:"POST",  headers: {
     //     'Accept': 'application/json',
     //     'content-type': 'application/json'
@@ -47,7 +62,7 @@ catch(e=>console.log("error from catch"))
 
 }
 
-
+// console.log(AsyncStorage.getItem("authToken"))
 const dim = Dimensions.get("screen").height/2
 // I18nManager.allowRTL(false)
 
