@@ -20,30 +20,7 @@ import Fourth from './fourthtransacion';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import PreviewPages from './previewpages';
 import jwtDecode from 'jwt-decode';
-// import "./assets"
 
-
-
-// Notification.setNotificationHandler({
-//   handleNotification: async () => ({
-//     shouldShowAlert: true,
-//     shouldPlaySound: false,
-//     shouldSetBadge: false,
-//   }),
-// });
-
-// // Second, call the method
-
-// Notification.scheduleNotificationAsync({
-//   content: {
-//     title: 'Look at that notification',
-//     body: "I'm so proud of myself!",
-//   },
-//   trigger: null,
-// });
-
-// StyleSheet
-// AppRegistry
 const Drawer =createDrawerNavigator()
 const BASE_URL =process.env.REACT_APP_BASE_URL;
 
@@ -110,24 +87,15 @@ GetToken()
       fetchNames();
       fetchStores();  
     } catch (error) {
-      console.log("error")
+  
     }
     
-    // const fetchBoth =async()=>{
-    
-    // const loadNames = await fetchNames(fetchData[0])
-    // // setContextData(loadData)
-    // setContractor(loadNames)
-    // }
-    // fetch()
+  
     }
     
 
 
 ,[])
-
-// naviga
-// navigation.toggleDrawer();
 
 
 function LoggedComponent (){
@@ -146,14 +114,15 @@ function LoggedComponent (){
         }} >
         
         
-        <Drawer.Screen name='Home' component={PreviewPages} options={{headerTitle:"Home"}} />
-        <Drawer.Screen name="عرض البيانات" component={Preview} navigationKey='C' preview={data}  />
+        <Drawer.Screen name='الرئيسية' component={PreviewPages} options={{headerTitle:"Home"}} />
+        
         <Drawer.Screen name='ادخال اذن وارد' component={FirstTransaction} />
         <Drawer.Screen name="ادخال اذن منصرف" component={Secondtransaction} />
         <Drawer.Screen name="ادخال اذن تحويل " component={Thirdtransaction} />
         
         <Drawer.Screen name="ادخال اذن مرتجع " component={Fourth} />
         <Drawer.Screen name="اضافة مهام الى المخزن" component={PostNewDataToMainWarehouse} />
+        <Drawer.Screen name="تسجيل خروج" component={PostNewDataToMainWarehouse} options={{drawerActiveTintColor:"red"}} />
       
       
         

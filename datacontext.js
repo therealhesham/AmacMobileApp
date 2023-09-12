@@ -6,3 +6,4 @@ export default  auth;
 export const Datacontext = createContext()
 export const storeNamesContext = createContext()
 export const  contractorsContext= createContext()
+export const placesContext = createContext()

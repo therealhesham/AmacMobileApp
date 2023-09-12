@@ -25,12 +25,20 @@ const [specificitems,setToGetSpecificITems]=useState([])
 const [notExist,setExistense]=useState(null)
 const [specificUnite,setSpecificUnite]=useState([])
 const [done,setDone]=useState(null)
-// useEffect(()=>{
+const [placesData,setPlacesData]=useState([])
+async function listofnames(){
 
-//     if(ex)& Clear()
+
+  await fetch(`${process.env.REACT_APP_BASE_URL}/listofplaces`,{method:"get"}).then(e=>e.json()).then(e=> setPlacesData(e))
+
+}
+
+useEffect(()=>{
+
+    
 
 
-// })
+})
 const postHandler =async(e)=>{
    
     
@@ -196,30 +204,8 @@ selectedValue={lOcation}
 label="الموقع"
 onValueChange={(e)=>setlOcation(e)}
 >
-<Picker.Item value="" label="اختر الموقع" enabled={false}>جبل الطير</Picker.Item>
-<Picker.Item value="جبل الطير" label="جبل الطير" >جبل الطير</Picker.Item>
-<Picker.Item value="ابوقرقاص" label="ابوقرقاص">ابوقرقاص</Picker.Item>
-<Picker.Item value="ابشاق" label="ابشاق">ابشاق</Picker.Item>
-<Picker.Item value="ابوان" label="ابوان">ابوان</Picker.Item>
-<Picker.Item value="بردنوها" label="بردنوها">بردنوها</Picker.Item>
-<Picker.Item value="نزلة جلف" label="نزلة جلف">نزلة جلف</Picker.Item>
-<Picker.Item value="ابوجرج" label="ابوجرج">ابوجرج</Picker.Item>
-<Picker.Item value="سلاقوس" label="سلاقوس">سلاقوس</Picker.Item>
-<Picker.Item value="شلقام" label="شلقام">شلقام</Picker.Item>
-<Picker.Item value="دمشير" label="دمشير">دمشير</Picker.Item>
-<Picker.Item value="بني سعيد" label="بني سعيد">بني سعيد</Picker.Item>
-<Picker.Item value="جريس" label="جريس">جريس</Picker.Item>
-<Picker.Item value="كوم محرص" label="كوم محرص">كوم محرص</Picker.Item>
-<Picker.Item value="السعدية" label="السعدية">السعدية</Picker.Item>
-<Picker.Item value="بني خالد" label="بني خالد">بني خالد</Picker.Item>
-<Picker.Item  value="طوخ الخيل" label="طوخ الخيل">طوخ الخيل</Picker.Item>
-<Picker.Item  value="دشطوط" label="دشطزط">دشطوط</Picker.Item>
-<Picker.Item  value="ريحانة" label="ريحانة">ريحانة</Picker.Item>
-<Picker.Item  value="اطفيح" label="اطفيح">اطفيح</Picker.Item>
-<Picker.Item  value="البرنسات" label="البرنسات">البرنسات</Picker.Item>
-<Picker.Item  value="دمشاو هاشم"label="دمشاو هاشم">دمشاو هاشم</Picker.Item>
-<Picker.Item  value="سمالوط" label="سمالوط">سمالوط</Picker.Item>
-
+<Picker.Item value="" label="اختر الموقع" enabled={false}>اختر الموقع</Picker.Item>
+{placesData? placesData.map(e=><Picker.Item value={e.name} label={e.name} >{e.name}</Picker.Item>):null}
 </Picker>
 
 

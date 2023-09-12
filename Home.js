@@ -58,7 +58,7 @@ const backgroundImageSource={uri:"./assets/download.jpg"}
     <View>
     <Button  title="LogIn" color="red" onPress={()=>props.navigation.navigate('Login')} />
     
-    <Button  title="Register"></Button>
+    
     </View>
     }
       </TouchableOpacity>

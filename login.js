@@ -33,7 +33,7 @@ try {
     const postData    =async()=>{
 try {
     
-    const {data} =await axios.post(`https://d021-196-133-126-25.ngrok-free.app/login`,{email,password})
+    const {data} =await axios.post(`${process.env.REACT_APP_BASE_URL}/login`,{email,password})
     await AsyncStorage.setItem("authToken",data.authtoken)
     // AsyncStorage.clear()
 
@@ -71,7 +71,7 @@ return ( <SafeAreaView >
     <Text>Login
         
     </Text>
-    <TouchableOpacity style={{backgroundColor:"wheat"}}>
+    <TouchableOpacity style={{backgroundColor:"white"}}>
  <KeyboardAvoidingView   behavior="position" keyboardVerticalOffset={200} style={styles.container}>
  
  <TextInput placeholder= "Email"  value={email} onChangeText={(e)=>setEmail(e)}

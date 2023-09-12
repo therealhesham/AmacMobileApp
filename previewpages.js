@@ -5,9 +5,14 @@ import {LinearGradient} from 'expo-linear-gradient';
 import Preview from "./preview";
 import App from "./App";
 import { Swipeable } from "react-native-gesture-handler";
+import PreviewFirst from "./firsttransactionpreview"
+import PreviewSecond from "./secondtransactionpreview";
+import PreviewThird from "./thirdtransactionpreview";
+import PreviewFourth from "./fouurthtransactionpreview";
+
 
 function Pages (props){
-    
+        
 
 return(
 <View style={{flex:1,flexDirection:"column"}}>
@@ -16,47 +21,49 @@ return(
 <View style={container.View}>
 <LinearGradient colors={['#ee9ca7', '#ffdde1']} style={{height:150,borderRadius:10}}>
 <Text style={{padding:40}}>
-    استعراض المخازن
+    المتاح 
 </Text>
 </LinearGradient>
 </View>
 </TouchableOpacity>
-<TouchableOpacity >
+<TouchableOpacity onPress={()=>props.navigation.navigate('PreviewFirst')} >
 <View style={container.View}>
 
 <LinearGradient colors={['#ee9ca7', '#ffdde1']} style={{height:150,borderRadius:10}}>
 <Text style={{padding:30}} allowFontScaling={false}>
-    استعراض اذون الوارد
+ الوارد
 </Text>
 </LinearGradient>
 </View>
 </TouchableOpacity>
-<TouchableOpacity >
+<TouchableOpacity onPress={()=>props.navigation.navigate('PreviewSecond')} >
 <View style={container.View}>
 <LinearGradient colors={['#fc4a1a', '#f7b733']} style={{height:150,borderRadius:10}}>
 <Text style={{paddingTop:30,paddingRight:30}}>
      
- استعراض المخازن
+ المنصرف
 </Text>
 </LinearGradient>
 </View>
 </TouchableOpacity>
-<TouchableOpacity>
+<TouchableOpacity onPress={()=>props.navigation.navigate('PreviewThird')} >
 <View style={container.View} >
 <LinearGradient colors={['#ee9ca7', '#ffdde1']} style={{height:150,borderRadius:10}}>
 <Text style={{padding:40}} allowFontScaling={false}>
-    استعراض المخازن
+    التحويل
 </Text>
 </LinearGradient>
 </View>
 </TouchableOpacity>
-<View style={container.View}>
-{/* <LinearGradient> */}
-<Text allowFontScaling={false}> 
-    استعراض المنصرف
+<TouchableOpacity onPress={()=>props.navigation.navigate('PreviewFourth')} >
+<View style={container.View} >
+<LinearGradient colors={['#ee9ca7', '#ffdde1']} style={{height:150,borderRadius:10}}>
+<Text style={{padding:40}} allowFontScaling={false}>
+    المرتجعات
 </Text>
-{/* </LinearGradient> */}
+</LinearGradient>
 </View>
+</TouchableOpacity>
 
 </View>
 
@@ -74,7 +81,7 @@ return(
 
 
  }
-
+ 
 
 
 const PreviewPages = () => {
@@ -87,6 +94,11 @@ const PreviewPages = () => {
 <Stack.Screen name="Pages" component={Pages}   />
 <Stack.Screen name="App" component={App} />
 <Stack.Screen name="Preview" component={Preview} />
+<Stack.Screen name="PreviewSecond" component={PreviewSecond} />
+
+<Stack.Screen name="PreviewFirst" component={PreviewFirst} />
+<Stack.Screen name="PreviewThird" component={PreviewThird} />
+<Stack.Screen name="PreviewFourth" component={PreviewFourth} />
 </Stack.Navigator>
 
 

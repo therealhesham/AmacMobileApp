@@ -70,6 +70,9 @@ const receiptRef = useRef();
 function receiptInputFocus() {
   receiptRef.current.focus();
 }
+function receiptInputBlur() {
+  receiptRef.current.blur();
+}
 
 function closeRefPicker() {
   receiptRef.current.blur();
@@ -166,6 +169,7 @@ const postHandler =async(e)=>{
  const getSpecificData = async (e)   =>{
   
   try {
+    console.log(e)
     setDestination(e)
   
 
@@ -186,17 +190,17 @@ const postHandler =async(e)=>{
  }
 return(
 
-<View style={{padding:5 ,backgroundColor:"white",flex:1,justifyContent:"flex-start"}}>
+<View style={{padding:30 ,backgroundColor:"white",flex:1,justifyContent:"flex-start"}}>
 
 
     
-<TextInput ref={receiptRef} autoFocus onFocus={receiptInputFocus} style={{ color:"black",opacity:1 ,right:"auto"}}  placeholder="رقم الاذن" keyboardType="numeric" value={receipt} onChangeText={e=>setReceipt(e)}/>
+<TextInput ref={receiptRef}  onBlur={receiptInputBlur} onFocus={receiptInputFocus} style={{ color:"black",opacity:1 ,right:"auto"}}  placeholder="رقم الاذن" keyboardType="numeric" value={receipt} onChangeText={e=>setReceipt(e)}/>
 
 
 
 <Picker style={{marginTop:3,opacity:1} }
-//   onBlur={closeRefPicker}
-//   onFocus={openRefPicker}
+  onBlur={closeRefPicker}
+  
 
   // ref={pickerRef}
   selectedValue={from}
