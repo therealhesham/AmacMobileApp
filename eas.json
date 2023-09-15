@@ -13,6 +13,8 @@
     "preview3": {
       "developmentClient": true
     },
-    "production": {"image":"latest","node": "16.13.0"}
+    "production": {"node": "16.13.0","env": {
+      "REACT_APP_BASE_URL":"https://reactnativebackend.onrender.com"
+    }}
   }
 }
