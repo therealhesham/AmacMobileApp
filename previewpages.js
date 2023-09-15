@@ -1,21 +1,26 @@
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
+
 import { createStackNavigator } from "@react-navigation/stack";
-import { StyleSheet, View ,Text, TouchableOpacity, Dimensions } from "react-native";
+import { StyleSheet, View ,Text, TouchableOpacity, Dimensions, Button,SafeAreaView } from "react-native";
 import {LinearGradient} from 'expo-linear-gradient';
 import Preview from "./preview";
-import App from "./App";
+// import App from "./App";
 import { Swipeable } from "react-native-gesture-handler";
 import PreviewFirst from "./firsttransactionpreview"
 import PreviewSecond from "./secondtransactionpreview";
 import PreviewThird from "./thirdtransactionpreview";
 import PreviewFourth from "./fouurthtransactionpreview";
-
+import { StatusBar } from "expo-status-bar";
+import ExpoStatusBar from "expo-status-bar/build/ExpoStatusBar";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function Pages (props){
         
+async function Signout() {
 
+   await AsyncStorage.removeItem("authToken")}
 return(
-<View style={{flex:1,flexDirection:"column"}}>
+<SafeAreaView style={{flex:1,flexDirection:"column" }}>
 <View style={container.container}>
 <TouchableOpacity onPress={()=>props.navigation.navigate('Preview')} >
 <View style={container.View}>
@@ -67,16 +72,13 @@ return(
 
 </View>
 
-<View>
-<Text>
-
-    
-</Text>
-
+<View style={{paddingBottom:30,width:200,alignSelf:"center"}}>
+<Button title="تسجيل الخروج"  onPress={Signout}/>
 
 </View>
     
-</View>
+
+</SafeAreaView>
 )
 
 
@@ -88,17 +90,17 @@ const PreviewPages = () => {
     const Stack = createStackNavigator() 
   
     return (
-    <NavigationContainer independent={true} >
-<Stack.Navigator initialRouteName="Pages"  screenOptions={{title:"عرض المخزن و حركات المخزن"}} >
+    <NavigationContainer independent={true}  >
+<Stack.Navigator initialRouteName="Pages"  >
 
-<Stack.Screen name="Pages" component={Pages}   />
-<Stack.Screen name="App" component={App} />
-<Stack.Screen name="Preview" component={Preview} />
-<Stack.Screen name="PreviewSecond" component={PreviewSecond} />
+<Stack.Screen name="Pages" component={Pages}  options={{title:"حركات المخازن "}} />
+{/* <Stack.Screen name="App" component={App} /> */}
+<Stack.Screen name="Preview" component={Preview} options={{title:" جرد المخازن"}} />
+<Stack.Screen name="PreviewSecond" component={PreviewSecond} options={{title:"المنصرف"}}/>
 
-<Stack.Screen name="PreviewFirst" component={PreviewFirst} />
-<Stack.Screen name="PreviewThird" component={PreviewThird} />
-<Stack.Screen name="PreviewFourth" component={PreviewFourth} />
+<Stack.Screen name="PreviewFirst" component={PreviewFirst} options={{title:"الــوارد"}}/>
+<Stack.Screen name="PreviewThird" component={PreviewThird} options={{title:"التحويل"}}/>
+<Stack.Screen name="PreviewFourth" component={PreviewFourth} options={{title:"المرتجع"}}/>
 </Stack.Navigator>
 
 

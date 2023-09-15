@@ -6,6 +6,7 @@ import axios, { Axios } from "axios";
 import { useContext, useEffect, useState } from "react";
 import { Dimensions, FlatList, Pressable, SafeAreaView, Text, TouchableOpacity, View, useWindowDimensions } from "react-native";
 import { Datacontext } from './datacontext';
+import { Searchbar } from 'react-native-paper';
 
 
 
@@ -29,6 +30,16 @@ await fetch(`${process.env.REACT_APP_BASE_URL}/refunds`,{method:"get"}).then(e=>
      },[])
 
 const [itemsData,setItemData]=useState(100)
+const [searchQuery, setSearchQuery] = useState('');
+const [filteredData,setFilter]=useState([])
+function filter(e){
+
+    setSearchQuery(e)
+  
+  const datas =data.filter(e=>e.items.includes(searchQuery))
+  setFilter(datas)
+        
+  }     
 
 
 
@@ -37,8 +48,9 @@ return(
 <TouchableOpacity >
 
             
- <View
-style={{ paddingLeft:12,paddingRight:12, borderBottomWidth:4,borderRadius:0  }} >
+ <View 
+style={{ paddingLeft:12,paddingRight:12, borderBottomWidth:4,borderRadius:0 ,
+ }} >
 
 <Text>رقم الاذن    {receiptno}</Text>
 <Text>المقاول     {contractor}</Text>
@@ -57,12 +69,19 @@ const [refreshing,setRefresh]=useState(false)
 
 return (<SafeAreaView style={{width:Dimensions.get("screen")
 }}>
-    <View style={{  opacity:1,height:26,paddingRight:5,justifyContent:"center",alignItems:"center",alignContent:"center"}}>
-<Text > المرتجعات</Text></View>
+
+<Searchbar
+style={{height:50,color:'white'}}
+      placeholder="بحث"
+      onChangeText={(query)=>filter(query)}
+      value={searchQuery}
+    />
+
 {user.data.length>0 &&<FlatList
 refreshing={refreshing}
+
 onRefresh={()=>setData([...data])}
-data={data}
+data={searchQuery.length>0 && filteredData ?filteredData:data}
 renderItem={e=> <ItemComponents  id={e.item._id}
 
 

@@ -57,6 +57,7 @@ const ref = useRef(0)
 const [transactionType,setTransactionType]=useState("")
 const[from,setFrom]=useState("")
 const refFocus =useRef()
+const [searchQuery, setSearchQuery] = useState('');
 const[to,setTo]=useState("")
 const[type,setType]=useState("")
 const [unit,setUnit]=useState([])
@@ -83,6 +84,7 @@ const [done,setDone]=useState(null)
 const [alert,setAlert] = useState("")
 const [receipt,setReceipt]=useState(null)
 const [specificitems,setToGetSpecificITems]=useState([])
+
 const [specificUnite,setSpecificUnite]=useState({})
 const usecontext = useContext(Datacontext)
 const useNameStoreContext=useContext(storeNamesContext)
@@ -187,7 +189,9 @@ const postHandler =async(e)=>{
   await axios.post(`${process.env.REACT_APP_BASE_URL}/specificunit`,{items:e}).then((e)=>setSpecificUnite(e.data)).catch(e=>console.log(e))
 
 
+
  }
+       
 return(
 
 <View style={{padding:30 ,backgroundColor:"white",flex:1,justifyContent:"flex-start"}}>

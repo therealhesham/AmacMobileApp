@@ -1,6 +1,7 @@
 import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import {SafeAreaView, View} from "react-native"
 import { RootSiblingParent } from 'react-native-root-siblings';
 import { StatusBar } from 'expo-status-bar';
 import HomeScreen from './Home';
@@ -9,7 +10,7 @@ import Login from './login';
 import Preview from './preview';
 import * as Notification from 'expo-notifications'
 import auth from './context';
-import { useEffect, useState } from 'react';
+import { useEffect, useState,useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FirstTransaction from './firsttransaction';
 import PostNewDataToMainWarehouse from './newdata';
@@ -18,13 +19,16 @@ import Secondtransaction from './secondtransaction';
 import Thirdtransaction from './thirdtransaction';
 import Fourth from './fourthtransacion';
 import { createDrawerNavigator } from '@react-navigation/drawer';
+
 import PreviewPages from './previewpages';
 import jwtDecode from 'jwt-decode';
+import ExpoStatusBar from 'expo-status-bar/build/ExpoStatusBar';
 
-const Drawer =createDrawerNavigator()
+
 const BASE_URL =process.env.REACT_APP_BASE_URL;
 
 export default function App() {
+  setInterval(GetToken, 1)  
 
 const [user,setUser]=useState("")
 const [data,setContextData]=useState([])
@@ -35,6 +39,7 @@ const [notificationsToken,setNotifcationsToken]=useState('')
 const [email,setEmail]=useState("")
 const [Jwt,setJwt]=useState("")
 const[authName,setAuthName]=useState(null)
+const ref =useRef(0)
 
 async function sendtoken(){
   const decoder = await jwtDecode(AsyncStorage.getItem("authToken"))
@@ -64,98 +69,120 @@ if (status == "granted")
   
 }
 
-useEffect(()=>{
-GetToken()
-//  token() 
-//  sendtoken()
-    const fetchData = async()=>{
+const fetchData = async()=>{
     
-       await fetch(`${BASE_URL}/preview`,{method:"get"}).then(e=>e.json()).then(e=> setContextData(e))
-    }
-    
-    const fetchNames = async()=>{
-    
-      await fetch(`${BASE_URL}/listofnames`,{method:"get"}).then(e=>e.json()).then(e=> setContractor(e))
-    }
-    const fetchStores = async()=>{
-    
-      await fetch(`${process.env.REACT_APP_BASE_URL}/listofstores`,{method:"get"}).then(e=>e.json()).then(e=> setStoreNames(e))
-    }
-    try {
-      fetchData();
-    
-      fetchNames();
-      fetchStores();  
-    } catch (error) {
-  
-    }
-    
-  
-    }
-    
+  await fetch(`${process.env.REACT_APP_BASE_URL}/preview`,{method:"get"}).then(e=>e.json()).then(e=> setContextData(e))
+}
 
+const fetchNames = async()=>{
+
+ await fetch(`${process.env.REACT_APP_BASE_URL}/listofnames`,{method:"get"}).then(e=>e.json()).then(e=> setContractor(e))
+}
+const fetchStores = async()=>{
+
+ await fetch(`${process.env.REACT_APP_BASE_URL}/listofstores`,{method:"get"}).then(e=>e.json()).then(e=> setStoreNames(e))
+}
+
+
+
+useEffect(()=>{
+
+
+  
+  
+if (ref.current === 1)  return; 
+
+      
+      fetchData();
+          fetchNames();
+
+
+  
+          fetchStores();   
+  
+      ref.current= ref.current+1  
+
+
+
+   }
 
 ,[])
 
 
 function LoggedComponent (){
+  const Drawer = createDrawerNavigator()
+  
   return (
     // 
+    <>
     
-      <NavigationContainer independent={true}>
+    <storeNamesContext.Provider value={{storeName,setStoreNames}}>
+    <Datacontext.Provider value={{data,setContextData}}>
+    <contractorsContext.Provider value={{contractor,setContractor}}>
+  <auth.Provider value={{user,setUser}} >
+
+      <NavigationContainer  independent={true}  >
     
-      <storeNamesContext.Provider value={{storeName,setStoreNames}}>
-        <Datacontext.Provider value={{data,setContextData}}>
-        <contractorsContext.Provider value={{contractor,setContractor}}>
-      <auth.Provider value={{user,setUser}} >
       
-      <Drawer.Navigator initialRouteName={'Home'}   screenOptions={{
-          swipeEdgeWidth:400,drawerActiveTintColor:"blue"
-        }} >
+        <Drawer.Navigator initialRouteName='Home'  style={{backgroundColor:"red"}} screenOptions={{
+            swipeEdgeWidth:400,drawerActiveTintColor:"blue" ,flex:1,headerTitle:null
+            
+          }} >
         
         
-        <Drawer.Screen name='الرئيسية' component={PreviewPages} options={{headerTitle:"Home"}} />
+        <Drawer.Screen name='Home' options={{drawerType:"slide"}} component={PreviewPages} />
         
         <Drawer.Screen name='ادخال اذن وارد' component={FirstTransaction} />
         <Drawer.Screen name="ادخال اذن منصرف" component={Secondtransaction} />
         <Drawer.Screen name="ادخال اذن تحويل " component={Thirdtransaction} />
-        
-        <Drawer.Screen name="ادخال اذن مرتجع " component={Fourth} />
+        {/* <Drawer.Screen name="Login" component={Login} */}
+        <Drawer.Screen name="ادخال اذن مرتجع " component={Fourth}  />
         <Drawer.Screen name="اضافة مهام الى المخزن" component={PostNewDataToMainWarehouse} />
-        <Drawer.Screen name="تسجيل خروج" component={PostNewDataToMainWarehouse} options={{drawerActiveTintColor:"red"}} />
-      
       
         
         
         </Drawer.Navigator>
+        </NavigationContainer>  
         </auth.Provider>
       </contractorsContext.Provider>
       </Datacontext.Provider>
       </storeNamesContext.Provider>
-      
+      </>
     
-    </NavigationContainer>  
+   
     
 
   )
   
 }
 const [Logger,setLogger]=useState("")
-async function GetToken(){
-  const logger =await AsyncStorage.getItem("authToken")
-  setLogger(logger)
 
+
+async function GetToken(){
+  
+    
+    const logger =await AsyncStorage.getItem("authToken")
+
+     setLogger(logger)
+  
 
 }
 function LoginInComponent (){
   return (
-<NavigationContainer><auth.Provider value={{user,setUser}} ><Stack.Navigator><Stack.Screen name="Login" component={Login}/></Stack.Navigator></auth.Provider></NavigationContainer>
+
+<NavigationContainer><auth.Provider value={{user,setUser}} ><Stack.Navigator >
+  <Stack.Screen name="Login" component={Login} options={{title:null}}/>
+  
+  </Stack.Navigator></auth.Provider></NavigationContainer>
   )}
 
 // {authName?<NavigationContainer independent={true}><Stack.Screen  name='Login' component={Login}/></NavigationContainer>:
 return (
 // 
+
 Logger?<LoggedComponent/>:<LoginInComponent/>
+
+
 
 
 )

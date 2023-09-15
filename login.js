@@ -1,7 +1,7 @@
 import axios from "axios";
 // AppState
 import { useContext, useEffect, useState } from "react";
-import { View,Text, TextInput, SafeAreaView, TouchableOpacity, Dimensions, I18nManager, KeyboardAvoidingView, StyleSheet, Button, AppState } from "react-native";
+import { View,Text, TextInput,Image, SafeAreaView, TouchableOpacity, Dimensions, I18nManager, KeyboardAvoidingView, StyleSheet, Button, AppState } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import auth from "./context";
 import { MailOutlined } from "@ant-design/icons";
@@ -25,40 +25,19 @@ try {
 }
         
     }
-            // useEffect(()=>
-            // jwtDecode(await AsyncStorage.getItem("authtoken"))? props.navigation.navigate("Preview"):null
             
-            // )
             
     const postData    =async()=>{
 try {
     
     const {data} =await axios.post(`${process.env.REACT_APP_BASE_URL}/login`,{email,password})
     await AsyncStorage.setItem("authToken",data.authtoken)
-    // AsyncStorage.clear()
-
-    // then(({data})=>data.authtoken?AsyncStorage.setItem
-    
-    
-    
-    
-    // authenticate.setUser(AsyncStorage.getItem("authToken"))
-    console.log(await AsyncStorage.getItem("authToken"))
+// props.navigation.navigate("Home")
     
         
 } catch (error) {
     
 }
-
-// await fetch("http://b8d8-196-133-9-14.ngrok-free.app/login",
-    // {method:"POST",  headers: {
-    //     'Accept': 'application/json',
-    //     'content-type': 'application/json'
-    //   },body:{email,password},credentials:true}).then((e)=>console.log(e.json))
-    
-// {await AsyncStorage.getItem("authToken")?props.navigation.replace("Home"):setError("خطأ في البيانات")}
-    // if(contextUser.user) return props.navigation.navigate("Preview")
-    // if(!contextUser.user)
 
 }
 
@@ -66,26 +45,24 @@ try {
 const dim = Dimensions.get("screen").height/2
 // I18nManager.allowRTL(false)
 
-return ( <SafeAreaView >
+return ( <SafeAreaView style={{backgroundColor:"white"}}>
     
-    <Text>Login
-        
-    </Text>
-    <TouchableOpacity style={{backgroundColor:"white"}}>
+    {/* <TouchableOpacity style={{backgroundColor:"white"}}> */}
  <KeyboardAvoidingView   behavior="position" keyboardVerticalOffset={200} style={styles.container}>
- 
- <TextInput placeholder= "Email"  value={email} onChangeText={(e)=>setEmail(e)}
-  style={{  borderRadius:19, backgroundColor: "white" , width:300 , height:35 , marginBottom:10}} secureTextEntry={false} />   
- <TextInput placeholder="Password" value={password} 
+ <View style={{alignItems:"center",flexDirection:"column"}} ><Image style={{width:100,height:101,marginBottom:1}} source={require('./assets/download.jpg')}  /></View>
+ <TextInput  autoFocus
+  placeholder= "  Email"  value={email} onChangeText={(e)=>setEmail(e)}
+  style={{  borderRadius:19, backgroundColor: "lavender" , width:300 , height:35 , marginBottom:10}} secureTextEntry={false} />   
+ <TextInput placeholder="  Password" value={password} 
  onChangeText={(e)=>setPassword(e)} 
- style={{  borderRadius:19, backgroundColor: "white" , width:300 , height:35,marginBottom:10}}
+ style={{  borderRadius:19, backgroundColor: "lavender" , width:300 , height:35,marginBottom:10}}
   secureTextEntry={true} />
 <View>{error?<Text style={{color:"red"}}>{error}</Text> :null}</View>
  <Button title="Submit" style={{width:"50 px"}} onPress={postData} ></Button>
+ 
  </KeyboardAvoidingView>
- </TouchableOpacity>
+ {/* </TouchableOpacity> */}
     
-
 
      </SafeAreaView> );
 
@@ -93,7 +70,7 @@ return ( <SafeAreaView >
 }
 const styles = StyleSheet.create({container:
 
-    {paddingTop: Dimensions.get("screen").height/2,width:100,paddingLeft: 20 , backgroundColor:"red",flexDirection:"column",alignItems:"flex-start"
+    {paddingTop: Dimensions.get("screen").height/3,width:100,paddingLeft: 20 , flexDirection:"column",alignItems:"flex-start",backgroundColor:"white"
 
 }
 }) 

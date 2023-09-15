@@ -1,6 +1,6 @@
 import * as Network from 'expo-network';
 import { StarOutlined, StarFilled, MailOutlined } from '@ant-design/icons';
-
+import { Searchbar } from 'react-native-paper'
 import { create } from "apisauce";
 import axios, { Axios } from "axios";
 import { useContext, useEffect, useState } from "react";
@@ -11,14 +11,15 @@ import { Datacontext } from './datacontext';
 
 const Preview = () => {
 const user=useContext(Datacontext)
-    const [data,setData]=useState([])
+const [data,setData]=useState([])
 // create("")
+const [searchQuery, setSearchQuery] = useState('');
+const [filteredData,setFilter]=useState([])
 const getter = async()=>{
 // axios.get
 const fff =await Network.getIpAddressAsync()
 await fetch(`${process.env.REACT_APP_BASE_URL}/preview`,{method:"get"}).then(e=>e.json()).then(e=>setData(e))
 }
-
 
 
 
@@ -28,7 +29,15 @@ await fetch(`${process.env.REACT_APP_BASE_URL}/preview`,{method:"get"}).then(e=>
 //   .then(e=>console.log(e))
         
      },[])
-// console.log(data)
+function filter(e){
+
+    setSearchQuery(e)
+
+ const datas =data.filter(e=>e.items.includes(searchQuery))
+setFilter(datas)
+        
+}        
+     // console.log(data)
 const [itemsData,setItemData]=useState(100)
 
 
@@ -39,7 +48,7 @@ return(
 
  <View
 
- style={{ paddingLeft:12,paddingRight:12, borderBottomWidth:4,borderRadius:30 , height:100 }} onTouchStart={()=>setItemData(itemData)}>
+ style={{ backgroundColor:"white",paddingLeft:12,paddingRight:12, borderBottomWidth:4,borderRadius:0 , height:100 }} onTouchStart={()=>setItemData(itemData)}>
 
 <Text>{itemData}</Text>
 <Text>{quantity}</Text>
@@ -54,12 +63,18 @@ const [refreshing,setRefresh]=useState(false)
 
 return (<SafeAreaView style={{width:Dimensions.get("screen")
 }}>
-    <View style={{backgroundColor:"f3a920",opacity:.2,height:26,paddingRight:5,justifyContent:"center",alignItems:"center",alignContent:"center"}}>
-<Text >المتاح في المخازن</Text></View>
+    
+<Searchbar
+style={{height:50,color:'white'}}
+      placeholder="بحث"
+      onChangeText={(query)=>filter(query)}
+      value={searchQuery}
+    />
 {user.data.length>0 &&<FlatList
 refreshing={refreshing}
+
 onRefresh={()=>setData([...user.data])}
-data={data}
+data={searchQuery.length>0 && filteredData ?filteredData:data}
 renderItem={e=> <ItemComponents  id={e.item._id} itemData={e.item.items} quantity={e.item.quantity} store={e.item.store}/>}
 keyExtractor={(e,index)=>e._id}/>
 }

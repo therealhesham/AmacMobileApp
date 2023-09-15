@@ -1,5 +1,5 @@
 import { Picker } from "@react-native-picker/picker";
-import { useContext, useState } from "react";
+import { useContext,useEffect, useState } from "react";
 import { Button, SafeAreaView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { Datacontext, contractorsContext, storeNamesContext } from "./datacontext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -34,7 +34,7 @@ async function listofnames(){
 }
 
 useEffect(()=>{
-
+  listofnames()
     
 
 
