@@ -13,6 +13,6 @@
     "preview3": {
       "developmentClient": true
     },
-    "production": {}
+    "production": {"image":"latest","node": "16.13.0"}
   }
 }
