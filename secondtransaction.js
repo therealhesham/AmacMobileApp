@@ -23,7 +23,7 @@ const [typeOfContracting,settypeOfContracting]=useState("")
 const [lOcation,setlOcation]=useState("")
 const [specificitems,setToGetSpecificITems]=useState([])
 const [notExist,setExistense]=useState(null)
-const [specificUnite,setSpecificUnite]=useState([])
+const [specificUnite,setSpecificUnite]=useState({})
 const [done,setDone]=useState(null)
 const [placesData,setPlacesData]=useState([])
 async function listofnames(){
@@ -38,7 +38,7 @@ useEffect(()=>{
     
 
 
-})
+},[])
 const postHandler =async(e)=>{
    
     
@@ -100,7 +100,7 @@ settypeOfContracting("")
        const getSpecificUnite=async(e)=>{
         setItems(e)
       
-        await axios.post(`${process.env.REACT_APP_BASE_URL}/specificunit`,{items:e}).then((e)=>setSpecificUnite(e.data)).catch(e=>console.log(e))
+        await axios.post(`${process.env.REACT_APP_BASE_URL}/specificunit`,{items:e,store:from}).then((e)=>setSpecificUnite(e.data)).catch(e=>console.log(e))
       
       
        }
@@ -121,8 +121,8 @@ settypeOfContracting("")
    >
   
   
-
-{storeNames.storeName.map((e)=><Picker.Item  label={e} value={e} key={e}/>)}
+  <Picker.Item  label="اختر المخزن من القائمة" value="اختر المخزن" enabled={false} key={3}/>
+{storeNames.storeName.map((e)=><Picker.Item  label={e.name} value={e.name} key={e._id}/>)}
 
 
 
@@ -139,7 +139,9 @@ placeholder="ذاتي / مقاول"
 
 selectedValue={typeOfImporter}
 onValueChange={(e)=>setTypeOfImporter(e)}
-><Picker.Item  label="تنفيذ ذاتي" value="تنفيذ ذاتي" Key={1} />
+>
+<Picker.Item  label="نوع التنفيذ" enabled={false} value="" Key={3} />
+  <Picker.Item  label="تنفيذ ذاتي" value="تنفيذ ذاتي" Key={1} />
 <Picker.Item   label="تنفيذ مقاول" value="تنفيذ مقاول"  key={2}/>
 
 
@@ -157,7 +159,7 @@ onValueChange={(e)=>setTypeOfImporter(e)}
 selectedValue={contractor}
 // label=؛
 onValueChange={(e)=>setContractor(e)}
-><Picker.Item label="اختر المقاول" disabled key="1" value="اختر المقاول" />
+><Picker.Item label="اختر المقاول" enabled={false} key="1" value="اختر المقاول" />
 {contractorNames.contractor.map(e=><Picker.Item label={e.name} key={e._id} value={e.name} /> )  }
 
 

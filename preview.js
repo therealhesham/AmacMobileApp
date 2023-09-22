@@ -42,18 +42,18 @@ const [itemsData,setItemData]=useState(100)
 
 
 
- const ItemComponents= ({itemData,quantity,store}) =>{
+ const ItemComponents= ({itemData,quantity,store,type}) =>{
 return(
 <TouchableOpacity >
 
  <View
 
- style={{ backgroundColor:"white",paddingLeft:12,paddingRight:12, borderBottomWidth:4,borderRadius:0 , height:100 }} onTouchStart={()=>setItemData(itemData)}>
-
-<Text>{itemData}</Text>
-<Text>{quantity}</Text>
+ style={{ backgroundColor:"white",paddingTop:6,paddingLeft:12,paddingRight:12, borderBottomWidth:4,borderRadius:0 , height:100 }} onTouchStart={()=>setItemData(itemData)}>
 <Text>{store}</Text>
-<View style={{height:5,borderRadius:13}}/>
+<Text>{itemData}</Text>
+<Text>{type} {quantity}</Text>
+
+<View style={{height:2,borderRadius:13}}/>
 </View>
 </TouchableOpacity>
 )
@@ -75,7 +75,7 @@ refreshing={refreshing}
 
 onRefresh={()=>setData([...user.data])}
 data={searchQuery.length>0 && filteredData ?filteredData:data}
-renderItem={e=> <ItemComponents  id={e.item._id} itemData={e.item.items} quantity={e.item.quantity} store={e.item.store}/>}
+renderItem={e=> <ItemComponents  id={e.item._id} itemData={e.item.items} quantity={e.item.quantity} store={e.item.store} type={e.item.type}/>}
 keyExtractor={(e,index)=>e._id}/>
 }
 

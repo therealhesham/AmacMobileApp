@@ -24,7 +24,7 @@ return(
 <View style={container.container}>
 <TouchableOpacity onPress={()=>props.navigation.navigate('Preview')} >
 <View style={container.View}>
-<LinearGradient colors={['#ee9ca7', '#ffdde1']} style={{height:150,borderRadius:10}}>
+<LinearGradient colors={["#C06C84", "#6C5B7B", "#355C7D"]} style={{height:150,borderRadius:10}}>
 <Text style={{padding:40}}>
     المتاح 
 </Text>
@@ -34,7 +34,7 @@ return(
 <TouchableOpacity onPress={()=>props.navigation.navigate('PreviewFirst')} >
 <View style={container.View}>
 
-<LinearGradient colors={['#ee9ca7', '#ffdde1']} style={{height:150,borderRadius:10}}>
+<LinearGradient colors={["#6d6027", "#d3cbb8"]} style={{height:150,borderRadius:10}}>
 <Text style={{padding:30}} allowFontScaling={false}>
  الوارد
 </Text>
@@ -53,7 +53,7 @@ return(
 </TouchableOpacity>
 <TouchableOpacity onPress={()=>props.navigation.navigate('PreviewThird')} >
 <View style={container.View} >
-<LinearGradient colors={['#ee9ca7', '#ffdde1']} style={{height:150,borderRadius:10}}>
+<LinearGradient colors={["#333333", "#dd1818"]} style={{height:150,borderRadius:10}}>
 <Text style={{padding:40}} allowFontScaling={false}>
     التحويل
 </Text>

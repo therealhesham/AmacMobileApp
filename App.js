@@ -10,7 +10,7 @@ import Login from './login';
 import Preview from './preview';
 import * as Notification from 'expo-notifications'
 import auth from './context';
-import { useEffect, useState,useRef } from 'react';
+import {useMemo, useEffect, useState,useRef,useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FirstTransaction from './firsttransaction';
 import PostNewDataToMainWarehouse from './newdata';
@@ -72,15 +72,18 @@ if (status == "granted")
 const fetchData = async()=>{
     
   await fetch(`${process.env.REACT_APP_BASE_URL}/preview`,{method:"get"}).then(e=>e.json()).then(e=> setContextData(e))
+  
+   
+
 }
 
 const fetchNames = async()=>{
-
- await fetch(`${process.env.REACT_APP_BASE_URL}/listofnames`,{method:"get"}).then(e=>e.json()).then(e=> setContractor(e))
+  await  fetch(`${process.env.REACT_APP_BASE_URL}/listofstores`,{method:"get"}).then(e=>e.json()).then(e=> setStoreNames(e))
+ 
 }
 const fetchStores = async()=>{
-
- await fetch(`${process.env.REACT_APP_BASE_URL}/listofstores`,{method:"get"}).then(e=>e.json()).then(e=> setStoreNames(e))
+  await fetch(`${process.env.REACT_APP_BASE_URL}/listofnames`,{method:"get"}).then(e=>e.json()).then(e=> setContractor(e))
+ 
 }
 
 
@@ -90,17 +93,12 @@ useEffect(()=>{
 
   
   
-if (ref.current === 1)  return; 
 
       
       fetchData();
-          fetchNames();
+      fetchNames();
+      fetchStores();
 
-
-  
-          fetchStores();   
-  
-      ref.current= ref.current+1  
 
 
 
@@ -116,13 +114,13 @@ function LoggedComponent (){
     // 
     <>
     
-    <storeNamesContext.Provider value={{storeName,setStoreNames}}>
-    <Datacontext.Provider value={{data,setContextData}}>
-    <contractorsContext.Provider value={{contractor,setContractor}}>
+   
   <auth.Provider value={{user,setUser}} >
 
       <NavigationContainer  independent={true}  >
-    
+      <storeNamesContext.Provider value={{storeName,setStoreNames}}>
+    <Datacontext.Provider value={{data,setContextData}}>
+    <contractorsContext.Provider value={{contractor,setContractor}}> 
       
         <Drawer.Navigator initialRouteName='Home'  style={{backgroundColor:"red"}} screenOptions={{
             swipeEdgeWidth:400,drawerActiveTintColor:"blue" ,flex:1,headerTitle:null
@@ -142,11 +140,12 @@ function LoggedComponent (){
         
         
         </Drawer.Navigator>
-        </NavigationContainer>  
-        </auth.Provider>
-      </contractorsContext.Provider>
+        </contractorsContext.Provider>
       </Datacontext.Provider>
       </storeNamesContext.Provider>
+        </NavigationContainer>  
+        </auth.Provider>
+      
       </>
     
    

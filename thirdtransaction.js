@@ -97,7 +97,7 @@ return (
     // <TouchableWithoutFeedback>
 <View style={{padding:21,color:"white"} }>
 
-<TextInput placeholder="رقم الاذن" value={receipt} onChangeText={e=>setReceipt(e)}/>
+<TextInput placeholder="رقم الاذن" keyboardType="numeric" value={receipt}  onChangeText={e=>setReceipt(e)}/>
 
 <Text> من مخزن</Text>
 <Picker selectedValue={from}
@@ -113,7 +113,7 @@ onValueChange={(value)=>{
 onBlur={toStores}
 >
 {/* <Picker.Item> */}
-{storeContext.storeName.map(e=> <Picker.Item value={e} label={e} key={e}/>)  }
+{storeContext.storeName.map(e=> <Picker.Item value={e.name} label={e.name} key={e._id}/>)  }
 {/* </Picker.Item> */}
 
 
@@ -130,7 +130,7 @@ setTo(value)
 
 >
 {/* <Picker.Item> */}
-{storeList.map(e=> <Picker.Item value={e} label={e} key={e}>{e}</Picker.Item>)  }
+{storeList.map(e=> <Picker.Item value={e.name} label={e.name} key={e._id}>{e.name}</Picker.Item>)  }
 {/* </Picker.Item> */}
 
 
@@ -171,7 +171,7 @@ onValueChange={(itemValue, itemIndex) =>
 <Picker.Item label="م/ط" key={1} value="م/ط"/>
 <Picker.Item label="عدد" key={2} value="عدد"/>
 
-<Picker.Item label="طن" value={3}  key={3}/>
+<Picker.Item label="طن" value="طن"  key={3}/>
 
 
 
@@ -179,7 +179,7 @@ onValueChange={(itemValue, itemIndex) =>
 </Picker>
 <TextInput placeholder="الكمية" keyboardType="numeric"  value={quantity} onChangeText={(e)=>setQuantity(e)}/>
 {/* <TouchableOpacity style={{width:300,flexDirection:"row",justifyContent:"center",alignItems:"center" }}> */}
-    <Button color="#D71313" title="تسجيل البيانات"   onPress={postHandler}/>
+    <TouchableOpacity style={{paddingTop:20}}><Button color="#D71313" title="تسجيل البيانات"   onPress={postHandler}/></TouchableOpacity>
     {/* </TouchableOpacity> */}
     
 { notExist ? <Toast onPress={()=>Toast.hide()}

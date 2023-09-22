@@ -87,7 +87,7 @@ onValueChange={(value)=>{
 
 >
 
-{storeContext.storeName.map(e=> <Picker.Item value={e} label={e} key={e}/>)  }
+{storeContext.storeName.map(e=> <Picker.Item value={e.name} label={e.name} key={e._id}/>)  }
 
 
 

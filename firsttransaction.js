@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-
-
+// import Autocomplete from "react-native-autocomplete-input";
 import axios from "axios";
 import jwtDecode from "jwt-decode";
 import { useRef } from "react";
@@ -48,11 +47,7 @@ setItem("")
 }
 
 
-//   const toasterDone =(e)=>{
-// Clear()
-// setDone("تم تسجيل البيانات بنجاح")
-// Toast.show({text:e,type:"success"})
-//   }
+
 const ref = useRef(0)
 const [transactionType,setTransactionType]=useState("")
 const[from,setFrom]=useState("")
@@ -66,10 +61,11 @@ const [destination ,setDestination ] =useState("")
 const [item,setItem]=useState("")
 const [notExist,setExistense]=useState(null)
 const [store,setStore]=useState(destination)
+const [factories,setFactories]=useState([])
 const receiptRef = useRef();
 
 function receiptInputFocus() {
-  receiptRef.current.focus();
+  return receiptRef.current.focusTextInput;
 }
 function receiptInputBlur() {
   receiptRef.current.blur();
@@ -97,7 +93,7 @@ const [searchedData,setSearchData]=useState([]);
     
     // console.log(`${s.target.value}`.trim());
     const mapper = data.filter(e=>e.items.includes(item))
-console.log(mapper)
+
     // .includes("سلاقوس")
     
     // data.filter((e)=>e.includes("مواسير"))
@@ -105,27 +101,17 @@ console.log(mapper)
     
         }
 
-
-// useEffect( ()=>{
-// if (ref.current  == 0) 
-// {  
-
-// fetch(`http://192.168.8.168:3000/preview`,{method:"get"}).then(e=>e.json()).then(e=>setData(e))
-// // console.log(ref.current  == 0)
-// const arr=[];
-// const unitArr = []
-
-// //    data.forEach(e=> {if (!arr.includes(e.store)) return  setFromList([...fromList,e.store])}) 
-    
-// // setFromList(arr)
-// //    data.forEach(e=> {if (!unitArr.includes(e.type)) return unitArr.push(e.type)})
-// //    fromList.length == 0 ?console.log(fromList):""
-// }
-// else {console.log(ref.current  == 0)}
-// },[])
+// const [factories,setFactories]=useState([])
+        async function getDatas(){
+          await axios.get(`${process.env.REACT_APP_BASE_URL}/listoffactories`,{withCredentials:true}).then((e) => 
+          setFactories(e.data)
+          )}
+        useEffect(()=>{
+getDatas()
 
 
 
+        },[])
 
 
 
@@ -171,7 +157,7 @@ const postHandler =async(e)=>{
  const getSpecificData = async (e)   =>{
   
   try {
-    console.log(e)
+    
     setDestination(e)
   
 
@@ -182,23 +168,31 @@ const postHandler =async(e)=>{
   
     
  }
-    
+
  const getSpecificUnite=async(e)=>{
+  
   setItem(e)
 
-  await axios.post(`${process.env.REACT_APP_BASE_URL}/specificunit`,{items:e}).then((e)=>setSpecificUnite(e.data)).catch(e=>console.log(e))
+  await axios.post(`${process.env.REACT_APP_BASE_URL}/specificunit`,{items:e,store:destination}).then((e)=>setSpecificUnite(e.data)).catch(e=>console.log(e))
 
 
 
  }
-       
+       const [querySource,setQuerySource]=useState("")
+       const [filteredData,setFilteredData]=useState([])
+function filterSource(value){
+  
+  const date = source.filter(e=> e.SOURCE.includes(value))
+
+setFilteredData(date)
+setQuerySource(value)
+}
+
 return(
-
+  
 <View style={{padding:30 ,backgroundColor:"white",flex:1,justifyContent:"flex-start"}}>
-
-
     
-<TextInput ref={receiptRef}  onBlur={receiptInputBlur} onFocus={receiptInputFocus} style={{ color:"black",opacity:1 ,right:"auto"}}  placeholder="رقم الاذن" keyboardType="numeric" value={receipt} onChangeText={e=>setReceipt(e)}/>
+<TextInput ref={receiptRef}  autoFocus   style={{ opacity:1 ,right:"auto"}}  placeholder="رقم الاذن" keyboardType="numeric" value={receipt} onChangeText={e=>setReceipt(e)}/>
 
 
 
@@ -211,8 +205,8 @@ return(
   onValueChange={(itemValue, itemIndex) =>
     setFrom(itemValue)
   }>
-<Picker.Item label="اختر من القائمة"  enabled={false} key={1}  />
-{source.map((e,index)=><Picker.Item label={e.SOURCE}  value={e.SOURCE} key={e.id}  /> )  }
+<Picker.Item label="  اختر من القائمة مصدر الوارد"  enabled={false} key={1}  />
+{factories.map((e,index)=><Picker.Item label={e.name}  value={e.name} key={e._id}  /> )  }
   
 </Picker>
 
@@ -227,8 +221,8 @@ return(
    >
   
   
-
-{useNameStoreContext.storeName.map((e)=><Picker.Item  label={e} value={e} key={e}/>)}
+  <Picker.Item  label={"اختر من القائمة المخزن"} enabled={false} value={"اختر من القائمة المخزن"} key={""}/>
+{useNameStoreContext.storeName.map((e)=><Picker.Item  label={e.name} value={e.name} key={e._id}/>)}
 
 
 
@@ -243,6 +237,7 @@ return(
 ref={pickUnitRef}
 selectedValue={item}
 onValueChange={(itemValue, itemIndex) =>
+  
   getSpecificUnite(itemValue)
 }  >
 <Picker.Item label=" اختر من القائمة المهام المطلوبة"  enabled={false} key={1}  />
@@ -258,14 +253,15 @@ onValueChange={(itemValue, itemIndex) =>
 // ref={pickUnitRef}
 selectedValue={type}
 onValueChange={(itemValue, itemIndex) =>
+    
     setType(itemValue)
 
 }  
 
 
-><Picker.Item label=" اختر من القائمة الوحدة المناسبة"  enabled={true} key={1}  />
+><Picker.Item label=" اختر من القائمة الوحدة المناسبة"  enabled={false} key={1}  />
 
-{specificUnite?<Picker.Item label={specificUnite.type} key={specificUnite._id} value={specificUnite.type}/>:""}
+{specificUnite ?<Picker.Item label={specificUnite.type} key={specificUnite._id} value={specificUnite.type}/>:<Text></Text>}
 
 
 

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "slug": "amac app",
-    "name": "amac app",
+    "name": "amacmobileapp",
+    "slug": "amacmobileapp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -15,13 +15,13 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.heshamahmedbadr.amacmobileapp"
     },
     "android": {
-      
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "white"
       },
       "package": "com.heshamahmedbadr.amacmobileapp"
     },
@@ -30,9 +30,7 @@
     },
     "extra": {
       "eas": {
-      
-        "android.useNextNotificationsApi": true ,
-      
+        "android.useNextNotificationsApi": true,
         "projectId": "915a68d2-f32f-4273-9002-bd547caf54a6"
       }
     }
