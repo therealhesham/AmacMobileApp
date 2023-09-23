@@ -45,7 +45,7 @@ const postHandler =async(e)=>{
     try {
         const find = await AsyncStorage.getItem("authToken")
         const details = jwtDecode(find)
-        
+        if (!details.isAdmin) return toasterExistance("only Admins can change and add new data")  
         if (!from ||  !type || !typeOfImporter || !lOcation  ||!quantity || !items|| !receipt  ) return toasterExistance("رجاء ملىء البيانات")
         
         await axios.post(`${process.env.REACT_APP_BASE_URL}/secondtransaction`,{store:from,typeOfImporter:typeOfImporter,

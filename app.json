@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "amacmobileapp",
-    "slug": "amacmobileapp",
+    "name": "Amac Store",
+    "slug": "AmacStore",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -21,7 +21,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "white"
+        "backgroundColor": "#FFFFFF"
       },
       "package": "com.heshamahmedbadr.amacmobileapp"
     },

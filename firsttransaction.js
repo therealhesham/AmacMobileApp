@@ -140,9 +140,11 @@ const source = [{SOURCE:"القاهرة",id:1}, {SOURCE:"مصنع",id:2}, {SOURC
 const postHandler =async(e)=>{
     // e.preventDefault()
     try {
+
     const find = await AsyncStorage.getItem("authToken")
     const details = jwtDecode(find)
-
+    if (!details.isAdmin) return toasterExistance("only Admins can change and add new data")
+console.log(details.admin)
     if (!from ||  !type || !quantity || !destination || !item || !receipt ) return toasterExistance("رجاء التأكد من ملىء جميع البيانات المطلوبة");
     await axios.post(`${process.env.REACT_APP_BASE_URL}/transactionexport`,
     {source:from,destination:destination,unit:type,quantity:quantity,items:item,receiptno:receipt,user:details.uername}).
@@ -192,7 +194,7 @@ return(
   
 <View style={{padding:30 ,backgroundColor:"white",flex:1,justifyContent:"flex-start"}}>
     
-<TextInput ref={receiptRef}  autoFocus   style={{ opacity:1 ,right:"auto"}}  placeholder="رقم الاذن" keyboardType="numeric" value={receipt} onChangeText={e=>setReceipt(e)}/>
+<TextInput ref={receiptRef}  autoFocus   style={{ opacity:1 ,right:"auto"}}  placeholder="رقم الاذن" keyboardType="numeric" ke value={receipt} onChangeText={e=>setReceipt(e)}/>
 
 
 

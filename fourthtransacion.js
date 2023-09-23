@@ -29,10 +29,10 @@ const [done,setDone]=useState("")
 
 const storeContext=useContext(storeNamesContext)
 const contractorNames=useContext(contractorsContext)
-const getSpecificData =(e)   =>{
+const getSpecificData =async (e)   =>{
     // alert(destination)
 
-    axios.post(`${BASE_URL}/specificdata`,{store:e}).then((e)=>setToGetSpecificITems(e.data)).catch(e=>console.log(e))
+    await axios.post(`${BASE_URL}/specificdata`,{store:e}).then((e)=>setToGetSpecificITems(e.data)).catch(e=>console.log(e))
     // console.log(destination);
  }
 
@@ -49,12 +49,21 @@ settypeOfContracting("")
 
 }
 
-const PostHandler= ()=>{
+const PostHandler=async ()=>{
+    try {
+        
+     
+    const find = await AsyncStorage.getItem("authToken")
+    const details = jwtDecode(find)
+    if (!details.isAdmin) return setExistense("only Admins can change and add new data")
+    
     if (!contractor ||  !destination || !quantity || !type || !items || !receipt ) return setExistense("رجاء ملىء البيانات")
-axios.post(`${BASE_URL}/refund`,{contractor:contractor,destination:destination,itens:items,
+await axios.post(`${BASE_URL}/refund`,{contractor:contractor,destination:destination,itens:items,
     quantity:quantity,type:type,receiptno:receipt}).then(e=>{
-        e.data == "error" ? setExistense("خطأ في التسجيل ... المهام غير متاحة بالمخزن") : Clear()})
-
+        e.data == "error" ? setExistense("خطأ في التسجيل ... لا يمكن اضافة مرتجع لمهام غير موجودة بالمخازن ") : Clear()})
+    }catch (error) {
+        
+        }
 
 }
 return(
