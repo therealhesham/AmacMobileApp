@@ -13,12 +13,16 @@ import PreviewFourth from "./fouurthtransactionpreview";
 import { StatusBar } from "expo-status-bar";
 import ExpoStatusBar from "expo-status-bar/build/ExpoStatusBar";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import auth from "./context";
+import { useContext } from "react";
 
 function Pages (props){
-        
+    const auths = useContext(auth)        
 async function Signout() {
 
-   await AsyncStorage.removeItem("authToken")}
+   await AsyncStorage.removeItem("authToken")
+auths.logs.setLogger("")
+}
 return(
 <SafeAreaView style={{flex:1,flexDirection:"column" }}>
 <View style={container.container}>

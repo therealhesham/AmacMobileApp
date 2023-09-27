@@ -30,10 +30,10 @@ try {
     const postData    =async()=>{
 try {
     
-    const {data} =await axios.post(`${process.env.REACT_APP_BASE_URL}/login`,{email,password})
+    const {data} =await axios.post(`https://reactnativebackend.onrender.com/login`,{email,password})
     await AsyncStorage.setItem("authToken",data.authtoken)
 // props.navigation.navigate("Home")
-    
+authenticate.setUser(data.authtoken)
         
 } catch (error) {
     
@@ -63,7 +63,7 @@ return ( <SafeAreaView style={{backgroundColor:"white"}}>
  </KeyboardAvoidingView>
  {/* </TouchableOpacity> */}
     
-
+ 
      </SafeAreaView> );
 
 

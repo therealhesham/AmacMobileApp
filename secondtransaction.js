@@ -1,20 +1,27 @@
 import { Picker } from "@react-native-picker/picker";
 import { useContext,useEffect, useState } from "react";
-import { Button, SafeAreaView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Button, FlatList, KeyboardAvoidingView, SafeAreaView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { Datacontext, contractorsContext, storeNamesContext } from "./datacontext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import jwtDecode from "jwt-decode";
+
+import {  Searchbar } from 'react-native-paper'
 import axios from "axios";
 import Toast from 'react-native-toast-message'
 
+import ListComponen from "./firsttransactionmemo";
 
 const  Secondtransaction= () => {
-const storeNames = useContext(storeNamesContext)
-const contractorNames = useContext(contractorsContext)
+// const storeNames = useContext(storeNamesContext)
+
 const [from,setFrom]=useState("")
+const [date,setDate]=useState("")
 const [typeOfImporter,setTypeOfImporter]=useState("")
+const [searchedData,setSearchData]=useState([]);
+const [searchQuery, setSearchQuery] = useState("");
 const [contractor,setContractor]=useState("")
 const [type,setType]=useState("")
+const [data,setData]=useState([])
 const [quantity,setQuantity]=useState("")
 const [receipt,setReceipt]=useState("")
 const [items,setItems]=useState("")
@@ -26,18 +33,21 @@ const [notExist,setExistense]=useState(null)
 const [specificUnite,setSpecificUnite]=useState({})
 const [done,setDone]=useState(null)
 const [placesData,setPlacesData]=useState([])
-async function listofnames(){
+const [storeNames,setStoreNames]=useState([])
+const [contractorNames,setContractorNames]=useState([])
 
 
-  await fetch(`${process.env.REACT_APP_BASE_URL}/listofplaces`,{method:"get"}).then(e=>e.json()).then(e=> setPlacesData(e))
+const fetchStores = async()=>{
+  await fetch(`https://reactnativebackend.onrender.com/listofnames`,{method:"get"}).then(e=>e.json()).then(e=> setContractorNames(e))
+ await fetch(`https://reactnativebackend.onrender.com/listofplaces`,{method:"get"}).then(e=>e.json()).then(e=> setPlacesData(e));
+ await fetch(`https://reactnativebackend.onrender.com/preview`,{method:"get"}).then(e=>e.json()).then(e=> setData(e));
+ await fetch(`https://reactnativebackend.onrender.com/listofstores`,{method:"get"}).then(e=>e.json()).then(e=> setStoreNames(e))
 
-}
-
+}  
 useEffect(()=>{
-  listofnames()
-    
-
-
+  fetchStores()
+  
+  
 },[])
 const postHandler =async(e)=>{
    
@@ -46,11 +56,11 @@ const postHandler =async(e)=>{
         const find = await AsyncStorage.getItem("authToken")
         const details = jwtDecode(find)
         if (!details.isAdmin) return toasterExistance("only Admins can change and add new data")  
-        if (!from ||  !type || !typeOfImporter || !lOcation  ||!quantity || !items|| !receipt  ) return toasterExistance("رجاء ملىء البيانات")
+        if (!from ||  !type || !typeOfImporter || !lOcation ||date  ||!quantity || !items|| !receipt  ) return toasterExistance("رجاء ملىء البيانات")
         
         await axios.post(`${process.env.REACT_APP_BASE_URL}/secondtransaction`,{store:from,typeOfImporter:typeOfImporter,
             contractor:contractor,typeOfContracting:typeOfContracting,
-            items:items,location:lOcation,quantity:quantity,receiptno:receipt,unit:type}).then(e=>
+            items:items,location:lOcation,date:date,quantity:quantity,receiptno:receipt,unit:type}).then(e=>
                e.data == "error" ? toasterExistance("خطأ في التسجيل ... المهام غير متاحة بالمخزن") : toasterDone("تم تسجيل البيانات بنجاح")
                
                
@@ -87,28 +97,48 @@ settypeOfContracting("")
     const getSpecificData = async (e)   =>{
   
         try {
-        //   setDestination(e)
-        setFrom(e)      
-      
-           await axios.post(`${process.env.REACT_APP_BASE_URL}/specificdata`,{store:e}).then((e)=>setToGetSpecificITems(e.data))
+          
+            //   setDestination(e)
+            setFrom(e)        
+const mapper = data.filter(s=>s.store === e)
+setToGetSpecificITems(mapper)
+
+  setSearchQuery("")
+
         } catch (error) {
           console.log("error")
         }
         
           
        }
-       const getSpecificUnite=async(e)=>{
-        setItems(e)
-      
-        await axios.post(`${process.env.REACT_APP_BASE_URL}/specificunit`,{items:e,store:from}).then((e)=>setSpecificUnite(e.data)).catch(e=>console.log(e))
-      
-      
-       }
+       const uniteGetter=(n,s)=>{
+        try {
+          setItems(s)
+          const mapper= specificitems.filter(e=>e._id == n );
+          setType(mapper[0].type)
+           
+        } catch (error) {
+          toasterExistance("المهام غير موجودة")
+        }
+        }
+        
+       const Search = (E)=>{
+    
+    
+    
+        const mapper = specificitems.filter(e=>e.items.includes(E))
+    
+        setSearchData(mapper)
+            }
+    
+    
     return (  
-    <SafeAreaView style={{backgroundColor:"white"}}>
+    <SafeAreaView style={{backgroundColor:"#ffffff",padding:3}}>
 
-<TextInput  keyboardType="numeric" value={receipt} placeholder="رقم الاذن" onChangeText={e=>setReceipt(e)}/>
+<TextInput  keyboardType="numeric" value={receipt} placeholder="رقم الاذن" style={{backgroundColor:"#fff8f5",height:60,borderRadius:10}} onChangeText={e=>setReceipt(e)}/>
 
+<TextInput  autoFocus placeholder="التاريخ"  keyboardType="default" style={{ opacity:1 ,right:"auto",height:50 , opacity:1,borderRadius:6,backgroundColor:"#fff8f5"}}  
+   value={date} onChange={e=>setDate(e.persist())}/>
 <Picker
  
   
@@ -121,8 +151,8 @@ settypeOfContracting("")
    >
   
   
-  <Picker.Item  label="اختر المخزن من القائمة" value="اختر المخزن" enabled={false} key={3}/>
-{storeNames.storeName.map((e)=><Picker.Item  label={e.name} value={e.name} key={e._id}/>)}
+  <Picker.Item  label="اختر المخزن من القائمة" value="اختر المخزن" enabled={false} key={1}/>
+{storeNames.map((e)=><Picker.Item  label={e.name} value={e.name} key={e._id}/>)}
 
 
 
@@ -155,12 +185,12 @@ onValueChange={(e)=>setTypeOfImporter(e)}
 
 {  typeOfImporter == "تنفيذ مقاول" ?
 <Picker
-
+// style={{color:"red"}}
 selectedValue={contractor}
 // label=؛
 onValueChange={(e)=>setContractor(e)}
-><Picker.Item label="اختر المقاول" enabled={false} key="1" value="اختر المقاول" />
-{contractorNames.contractor.map(e=><Picker.Item label={e.name} key={e._id} value={e.name} /> )  }
+><Picker.Item label="اختر المقاول"  enabled={false} key={1} value="اختر المقاول" />
+{contractorNames.map(e=><Picker.Item label={e.name}  key={e._id} value={e.name} /> )  }
 
 
 </Picker>
@@ -183,22 +213,13 @@ onValueChange={(e)=>settypeOfContracting(e)}
 </Picker>
 
 : null }
-<Picker
-
-selectedValue={items}
-label="items"
-
-onValueChange={(itemValue, itemIndex) =>
-    getSpecificUnite(itemValue)}
->
-<Picker.Item value="اختر المهام" label="اختر المهام" enabled={false}>اختر المهام</Picker.Item>
-{specificitems?specificitems.map(e=><Picker.Item value={e.items}  key={e._id} label={e.items}/>):"waiting"}
 
 
 
-</Picker>
-
-
+<View style={{width:300,alignSelf:"center"}}>
+{items?<Text style={{height:50, opacity:1,borderRadius:6,backgroundColor:"#fff8f5"}}>{items}</Text>:null}
+{type?<Text style={{height:50 , opacity:1,borderRadius:6,backgroundColor:"#fff8f5"}}>{type}</Text>:null}
+</View>
 
 <Picker
 placeholder="الموقع"
@@ -212,28 +233,6 @@ onValueChange={(e)=>setlOcation(e)}
 
 
 
-
-<Picker
-// onFocus={openUnitRef}
-// onBlur={closeUnitRef}
-// ref={pickUnitRef}
-selectedValue={type}
-onValueChange={(itemValue, itemIndex) =>
-    setType(itemValue)
-
-}  
-
-
-><Picker.Item label=" اختر من القائمة الوحدة المناسبة"  enabled={true} key={1}  />
-
-{specificUnite?<Picker.Item label={specificUnite.type} key={specificUnite._id} value={specificUnite.type}/>:""}
-
-
-
-
-
-
-</Picker>
  
 
 <TextInput  label="الكمية" 
@@ -254,6 +253,32 @@ value={quantity} onChangeText={e=>setQuantity(e)}/>
 <Button    title="تسجيل بيانات" onPress={postHandler} >تسجيل بيانات</Button> 
 
 
+{specificitems.length >0?
+    <KeyboardAvoidingView
+
+
+>
+<Searchbar
+style={{height:50, marginBottom:3,opacity:.9}}
+      placeholder="بحث"
+      onChangeText={(query)=>Search(query)}
+      // value={searchQuery}
+    />
+
+
+<View >
+  <FlatList
+          
+  
+  initialNumToRender={2}
+  
+   style={{height:200 }} 
+keyExtractor={(e,index)=>e._id}
+data={searchedData.length > 0 ?searchedData:specificitems}
+renderItem={e=> <ListComponen uniteGetter={(e,d)=>uniteGetter(e,d)} id={e.item._id}  key={e.item._id} item={e.item.items}/> }/>
+
+ </View>
+    </ KeyboardAvoidingView>:""}
 
 
 

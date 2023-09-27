@@ -1,16 +1,18 @@
+
 import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import {SafeAreaView, View} from "react-native"
+import {Button, Dimensions, Image, SafeAreaView, TextInput, View ,KeyboardAvoidingView} from "react-native"
 import { RootSiblingParent } from 'react-native-root-siblings';
 import { StatusBar } from 'expo-status-bar';
 import HomeScreen from './Home';
+
 import { AppRegistry, StyleSheet } from 'react-native';
 import Login from './login';
 import Preview from './preview';
 import * as Notification from 'expo-notifications'
 import auth from './context';
-import {useMemo, useEffect, useState,useRef,useCallback } from 'react';
+import {useMemo, useEffect, useState,useRef,useCallback, useContext} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FirstTransaction from './firsttransaction';
 import PostNewDataToMainWarehouse from './newdata';
@@ -23,27 +25,76 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import PreviewPages from './previewpages';
 import jwtDecode from 'jwt-decode';
 import ExpoStatusBar from 'expo-status-bar/build/ExpoStatusBar';
+import axios from 'axios';
+// import { KeyboardAvoidingView } from 'react-native-web';
 
 
 const BASE_URL =process.env.REACT_APP_BASE_URL;
 
 export default function App() {
-  setInterval(GetToken, 1)  
+  // setInterval(GetToken, 1000)  
 
-const [user,setUser]=useState("")
+
+  const [user,setUser]=useState("")
 const [data,setContextData]=useState([])
 const [contractor,setContractor]=useState([])
 const [storeName,setStoreNames]=useState([])
 const Stack = createStackNavigator()
 const [notificationsToken,setNotifcationsToken]=useState('')
-const [email,setEmail]=useState("")
+
 const [Jwt,setJwt]=useState("")
-const[authName,setAuthName]=useState(null)
+
+const [Logger,setLogger]=useState({})
+const[authName,setAuthName]=useState(Logger)
 const ref =useRef(0)
 
+
+    const [email,setEmail]=useState("")
+    const [password,setPassword]=useState("")
+    
+    
+
+    const [error,setError]=useState()
+    const storage= async ()=>{
+try {
+    
+} catch (error) {
+    
+}
+        
+    }
+    // setTimeout (()=>GetToken,1000) 
+    useEffect(()=>{
+
+      GetToken()
+         }
+      
+      ,[])
+                  
+            
+    const postData    =async()=>{
+try {
+    
+    const {data} =await axios.post(`https://reactnativebackend.onrender.com/login`,{email,password})
+    await AsyncStorage.setItem("authToken",data.authtoken)
+// props.navigation.navigate("Home")
+
+const condes = jwtDecode(data.authtoken)
+// authenticate.setUser(condes)
+setLogger(condes)
+        
+
+} catch (error) {
+// console    
+}
+
+}
+
+// console.log(AsyncStorage.getItem("authToken"))
+const dim = Dimensions.get("screen").height/2
 async function sendtoken(){
   const decoder = await jwtDecode(AsyncStorage.getItem("authToken"))
-  setJwt(decoder)
+  
   
   await axios.post(`${process.env.REACT_APP_BASE_URL}/sendtokentodb`,{email,token:notificationsToken})
   
@@ -69,45 +120,33 @@ if (status == "granted")
   
 }
 
-const fetchData = async()=>{
+
+
+const date = new Date();
+const hour = date.getHours();
+const min = date.getMinutes();
+
+const refauth = useRef(0)
+async function GetToken(){
+  
+  try {
     
-  await fetch(`${process.env.REACT_APP_BASE_URL}/preview`,{method:"get"}).then(e=>e.json()).then(e=> setContextData(e))
+    const logger =await AsyncStorage.getItem("authToken")
+const jwtDetails=jwtDecode(logger)
+setLogger(jwtDetails)
   
-   
+  } catch (error) {
+    console.log(error)
+    
+    setLogger("")
+    
+  }
+  
 
 }
 
-const fetchNames = async()=>{
-  await  fetch(`${process.env.REACT_APP_BASE_URL}/listofstores`,{method:"get"}).then(e=>e.json()).then(e=> setStoreNames(e))
- 
-}
-const fetchStores = async()=>{
-  await fetch(`${process.env.REACT_APP_BASE_URL}/listofnames`,{method:"get"}).then(e=>e.json()).then(e=> setContractor(e))
- 
-}
 
-
-
-useEffect(()=>{
-
-
-  
-  
-
-      
-      fetchData();
-      fetchNames();
-      fetchStores();
-
-
-
-
-   }
-
-,[])
-
-
-function LoggedComponent (){
+function LoggedComponent (props){
   const Drawer = createDrawerNavigator()
   
   return (
@@ -115,13 +154,12 @@ function LoggedComponent (){
     <>
     
    
-  <auth.Provider value={{user,setUser}} >
 
       <NavigationContainer  independent={true}  >
-      <storeNamesContext.Provider value={{storeName,setStoreNames}}>
+
     <Datacontext.Provider value={{data,setContextData}}>
     <contractorsContext.Provider value={{contractor,setContractor}}> 
-      
+<auth.Provider value={props}>
         <Drawer.Navigator initialRouteName='Home'  style={{backgroundColor:"red"}} screenOptions={{
             swipeEdgeWidth:400,drawerActiveTintColor:"blue" ,flex:1,headerTitle:null
             
@@ -140,11 +178,12 @@ function LoggedComponent (){
         
         
         </Drawer.Navigator>
+        </auth.Provider>      
         </contractorsContext.Provider>
       </Datacontext.Provider>
-      </storeNamesContext.Provider>
+
         </NavigationContainer>  
-        </auth.Provider>
+
       
       </>
     
@@ -154,46 +193,67 @@ function LoggedComponent (){
   )
   
 }
-const [Logger,setLogger]=useState("")
 
 
-async function GetToken(){
-  
-    
-    const logger =await AsyncStorage.getItem("authToken")
 
-     setLogger(logger)
-  
 
-}
 function LoginInComponent (){
+  
   return (
 
-<NavigationContainer><auth.Provider value={{user,setUser}} ><Stack.Navigator >
+<NavigationContainer><Stack.Navigator >
   <Stack.Screen name="Login" component={Login} options={{title:null}}/>
   
-  </Stack.Navigator></auth.Provider></NavigationContainer>
+  </Stack.Navigator></NavigationContainer>
   )}
 
-// {authName?<NavigationContainer independent={true}><Stack.Screen  name='Login' component={Login}/></NavigationContainer>:
+  // {authName?<NavigationContainer independent={true}><Stack.Screen  name='Login' component={Login}/></NavigationContainer>:
+
+
 return (
-// 
+//
+ 
 
-Logger?<LoggedComponent/>:<LoginInComponent/>
+ Logger.username ?
 
 
-
+<LoggedComponent logs={{Logger,setLogger}}/>:
+<auth.Provider value={{user,setUser}}>
+<SafeAreaView style={{backgroundColor:"white"}}>
+    
+    {/* <TouchableOpacity style={{backgroundColor:"white"}}> */}
+ <KeyboardAvoidingView   behavior="position" keyboardVerticalOffset={200} style={styles.container}>
+ <View style={{alignItems:"center",flexDirection:"column"}} ><Image style={{width:100,height:101,marginBottom:1}} source={require('./assets/download.jpg')}  /></View>
+ <TextInput  autoFocus
+  placeholder= "  Email"  value={email} onChangeText={(e)=>setEmail(e)}
+  style={{  borderRadius:19, backgroundColor: "lavender" , width:300 , height:35 , marginBottom:10}} secureTextEntry={false} />   
+ <TextInput placeholder="  Password" value={password} 
+ onChangeText={(e)=>setPassword(e)} 
+ style={{  borderRadius:19, backgroundColor: "lavender" , width:300 , height:35,marginBottom:10}}
+  secureTextEntry={true} />
+<View>{error?<Text style={{color:"red"}}>{error}</Text> :null}</View>
+ <Button title="Submit" style={{width:"50 px"}} onPress={postData} ></Button>
+ 
+ </KeyboardAvoidingView>
+ {/* </TouchableOpacity> */}
+    
+ 
+     </SafeAreaView>
+     </auth.Provider>
+ 
 
 )
 }
+// const styles = StyleSheet.create({container:
 
+//   {paddingTop: Dimensions.get("screen").height/3,width:100,paddingLeft: 20 , flexDirection:"column",alignItems:"flex-start",backgroundColor:"white"
+
+// }
+// }) 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    // alignItems: 'center',
-    // justifyContent: 'center',
-  },ImageBackground:{
+  container: {paddingTop: Dimensions.get("screen").height/3,width:100,paddingLeft: 20 , flexDirection:"column",alignItems:"flex-start",backgroundColor:"white"
+
+},ImageBackground:{
     width:"300 px",
     
     height:"600 px",

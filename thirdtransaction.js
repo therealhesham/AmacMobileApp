@@ -4,32 +4,43 @@ import { Picker } from "@react-native-picker/picker";
 import axios from "axios";
 import jwtDecode from "jwt-decode";
 import { useContext, useEffect, useState } from "react";
-import { Button, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
-import { REACT_APP_DEV_MODE, REACT_APP_PROD_MODE } from "@env"
-import { storeNamesContext } from "./datacontext";
+
+import { Button, FlatList, KeyboardAvoidingView, SafeAreaView, Text, TextInput, TouchableOpacity, View } from "react-native";
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from 'react-native-toast-message'
-
+import ListComponen from "./firsttransactionmemo";
+import {  Searchbar } from 'react-native-paper'
 
 
 
 export default function Thirdtransaction (){
 const [from , setFrom]= useState("")
+const [date,setDate]=useState("")
 const [to,setTo]=useState("")
 const [items,setItems]=useState("")
 const [toList ,setToList] = useState([]);
 const [type,setType]=useState("");
 const [quantity,setQuantity]= useState("");
-const [notExist,setExistense]=useState("");
+const [notExist,setExistense]=useState(null);
 const [specificitems,setToGetSpecificITems]=useState([]);
 const [receipt,setReceipt]=useState("");
 const [specificUnite,setSpecificUnite]=useState();
 const [done,setDone]=useState("");
 const [storeList,setToStoreList]=useState([]);
-const storeContext=useContext(storeNamesContext)
+const [data,setData]=useState([]);
+const [storeaNames,setStoreNames]=useState([])
+const [searchedData,setSearchData]=useState([]);
 
     // Toast.hide({text1:done,type:"success"})
+  const fetchDate  =async()=>{
+   await fetch(`https://reactnativebackend.onrender.com/preview`,{method:"get"}).then(e=>e.json()).then(e=> setData(e));
+    await fetch(`https://reactnativebackend.onrender.com/listofstores`,{method:"get"}).then(e=>e.json()).then(e=> setStoreNames(e))
+  }
+    useEffect(()=>{
         
+       fetchDate();
+      },[])        
 
 const toasterExistance= (e)=>{setExistense(e)
 Toast.show({text1:e,type:"error"})
@@ -56,7 +67,7 @@ try {
     // const details = jwtDecode(find)
 if (!from ||  !to || !quantity || !type || !items || !receipt ) return  toasterExistance("رجاء ملىء البيانات")
 if (from === to )   return toasterExistance("غير المخزن المحول منه او له") ;
- await axios.post(`${process.env.REACT_APP_BASE_URL}/thirdtransaction`,{receiptno:receipt,from:from,to:to,items:items,type:type,quantity:quantity}).then(e=>
+ await axios.post(`${process.env.REACT_APP_BASE_URL}/thirdtransaction`,{receiptno:receipt,date:date,from:from,to:to,items:items,type:type,quantity:quantity}).then(e=>
     e.data == "error" ? toasterExistance("  خطأ في التسجيل ... المهام غير متاحة بالمخزن المحول اليه او قد يكون الكمية في المخزن المحول منه اقل من المطلوب ") : toasterDone("تم تسجيل البيانات بنجاح"))
  }catch (error) {
 
@@ -65,11 +76,9 @@ if (from === to )   return toasterExistance("غير المخزن المحول م
 }
 
 const getSpecificData =  (e)   =>{
-    // alert(destination)
-    setFrom(e)
-// ss
-     axios.post(`${process.env.REACT_APP_BASE_URL}/specificdata`,{store:e}).then((e)=>setToGetSpecificITems(e.data)).catch(e=>console.log(e))
-    // console.log(destination);
+    setFrom(e)        
+    const mapper = data.filter(s=>s.store === e)
+    setToGetSpecificITems(mapper)
    
  }
  function Clear (){
@@ -95,18 +104,35 @@ Toast.show({
     type: 'info',
     text1: done
   })
- const toStores =(s) =>{
-
-    const stores = storeContext.storeName.filter(e=> e != from )   
-    setToStoreList(stores)
-  } 
+  const uniteGetter=(n,s)=>{
+    try {
+      setItems(s)
+      const mapper= specificitems.filter(e=>e._id == n );
+      setType(mapper[0].type)
+       
+    } catch (error) {
+      toasterExistance("المهام غير موجودة")
+    }
+    }
+    const Search = (E)=>{
+    
+    
+    
+        const mapper = specificitems.filter(e=>e.items.includes(E))
+    
+        setSearchData(mapper)
+            }
+    
+    // specificitems.length=10
 return (
-    // <TouchableWithoutFeedback>
-<View style={{padding:21,color:"white"} }>
+ 
+<View style={{backgroundColor:"#ffffff",padding:5}}>
 
 <TextInput placeholder="رقم الاذن" keyboardType="numeric" value={receipt}  onChangeText={e=>setReceipt(e)}/>
 
-<Text> من مخزن</Text>
+
+<TextInput  autoFocus placeholder="التاريخ"  keyboardType="default" style={{ opacity:1 ,right:"auto",height:50 , opacity:1,borderRadius:6,backgroundColor:"#fff8f5"}}  
+   value={date} onChange={e=>setDate(e.persist())}/>
 <Picker selectedValue={from}
 
 onValueChange={(value)=>{
@@ -117,17 +143,18 @@ onValueChange={(value)=>{
     
 }}
 
-onBlur={toStores}
+
 >
+<Picker.Item value="من مخزن" enabled={false} label="من مخزن" key={1}/>
 {/* <Picker.Item> */}
-{storeContext.storeName.map(e=> <Picker.Item value={e.name} label={e.name} key={e._id}/>)  }
+{storeaNames.map(e=> <Picker.Item value={e.name} label={e.name} key={e._id}/>)  }
 {/* </Picker.Item> */}
 
 
 
 </Picker>
 
-<Text >الى مخزن</Text>
+
 <Picker selectedValue={to}
 
 onValueChange={(value)=>{
@@ -136,54 +163,21 @@ setTo(value)
 }}
 
 >
+<Picker.Item value="الى مخزن" disabled label="الى مخزن" key={1}/>
 {/* <Picker.Item> */}
-{storeList.map(e=> <Picker.Item value={e.name} label={e.name} key={e._id}>{e.name}</Picker.Item>)  }
+{storeaNames.filter(e=> e.name !== from ).map(e=> <Picker.Item value={e.name} label={e.name} key={e._id}>{e.name}</Picker.Item>)  }
 {/* </Picker.Item> */}
 
 
 
 </Picker>
 
-<Text > المهام</Text>
-<Picker selectedValue={items}
 
-onValueChange={(value)=>{
-setItems(value)
+<View style={{width:300,alignSelf:"center"}}>
+{items?<Text style={{height:50, opacity:1,borderRadius:6,backgroundColor:"#fff8f5"}}>{items}</Text>:null}
+{type?<Text style={{height:50 , opacity:1,borderRadius:6,backgroundColor:"#fff8f5"}}>{type}</Text>:null}
+</View>
 
-}}
-
->
-{/* <Picker.Item> */}
-{specificitems.map(e=> <Picker.Item value={e.items} label={e.items}   key={e._id}/>)  }
-{/* </Picker.Item> */}
-
-
-
-</Picker>
-<Picker
-// onFocus={openUnitRef}
-// onBlur={closeUnitRef}
-
-selectedValue={type}
-onValueChange={(itemValue, itemIndex) =>
-    setType(itemValue)
-
-}  
-
-
->
-
-
-
-<Picker.Item label="م/ط" key={1} value="م/ط"/>
-<Picker.Item label="عدد" key={2} value="عدد"/>
-
-<Picker.Item label="طن" value="طن"  key={3}/>
-
-
-
-
-</Picker>
 <TextInput placeholder="الكمية" keyboardType="numeric"  value={quantity} onChangeText={(e)=>setQuantity(e)}/>
 {/* <TouchableOpacity style={{width:300,flexDirection:"row",justifyContent:"center",alignItems:"center" }}> */}
     <TouchableOpacity style={{paddingTop:20}}><Button color="#D71313" title="تسجيل البيانات"   onPress={postHandler}/></TouchableOpacity>
@@ -200,10 +194,38 @@ onValueChange={(itemValue, itemIndex) =>
       />:null} 
 
    
+{specificitems.length >0?
+    <KeyboardAvoidingView
+
+
+>
+<Searchbar
+focusable={false}
+style={{height:50, marginBottom:3,opacity:.9}}
+      placeholder="البحث عن المهام من هنا"
+      onChangeText={(query)=>Search(query)}
+ 
+    />
+
+
+<View >
+  <FlatList
+          
+// initialNumToRende={10}
+//   maxToRenderPerBatch={10}
+  initialNumToRender={2}
+  
+   style={{height:200 }} 
+keyExtractor={(e,index)=>e._id}
+data={searchedData.length > 0 ?searchedData:specificitems}
+renderItem={e=> <ListComponen uniteGetter={(e,d)=>uniteGetter(e,d)} id={e.item._id}  item={e.item.items}/> }/>
+
+ </View>
+    </ KeyboardAvoidingView>:""}
+
 
 
     </View>
-/* </Touchableop> */
 
 )
 
