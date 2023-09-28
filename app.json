@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Amac Store Manager",
-    "slug": "Amac Store Manager",
+    "slug": "amacmobileapp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
