@@ -11,15 +11,18 @@ import { Searchbar } from 'react-native-paper';
 
 
 const PreviewFirst = () => {
+    const ssssss =process.env.REACT_APP_BASE_URL
 const user=useContext(Datacontext)
     const [data,setData]=useState([])
 // create("")
 const getter = async()=>{
 // axios.get
 // const fff =await Network.getIpAddressAsync()
-await fetch(`${process.env.REACT_APP_BASE_URL}/firsttansactionlist`,{method:"get"}).then(e=>e.json()).then(e=>setData(e))
+await fetch(`https://reactnativebackend.onrender.com/firsttansactionlist`,{method:"get"}).then(e=>e.json()).then(e=>setData(e))
 }
 
+
+console.log(process.env.REACT_APP_BASE_URL)
 
 
 
@@ -73,7 +76,7 @@ style={{height:50,color:'white'}}
       onChangeText={(query)=>filter(query)}
       value={searchQuery}
     />
-{user.data.length>0 &&<FlatList
+{data.length>0 &&<FlatList
 refreshing={refreshing}
 
 data={searchQuery.length>0 && filteredData ?filteredData:data}

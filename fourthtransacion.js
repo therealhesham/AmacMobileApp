@@ -139,7 +139,7 @@ const Search = (E)=>{
         }
 
 return(
-<KeyboardAvoidingView behavior="position" style={{backgroundColor:"#ffffff",padding:5}}>
+<KeyboardAvoidingView behavior="position" style={{backgroundColor:"#ffffff",padding:30}}>
 
 <TextInput placeholder="رقم الاذن" value={receipt} onChangeText={e=>setReceipt(e)}/>
 

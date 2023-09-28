@@ -17,7 +17,7 @@ const user=useContext(Datacontext)
 const getter = async()=>{
 // axios.get
 // const fff =await Network.getIpAddressAsync()
-await fetch(`${process.env.REACT_APP_BASE_URL}/thirdtransaction`,{method:"get"}).then(e=>e.json()).then(e=>setData(e))
+await fetch(`${process.env.REACT_APP_BASE_URL}/getthirdtransactions`,{method:"get"}).then(e=>e.json()).then(e=>setData(e))
 }
 
 
@@ -75,7 +75,7 @@ style={{height:50,color:'white'}}
       onChangeText={(query)=>filter(query)}
       value={searchQuery}
     />
-{user.data.length>0 &&<FlatList
+{data.length>0 &&<FlatList
 refreshing={refreshing}
 onRefresh={()=>setData([...data])}
 data={searchQuery.length>0 && filteredData ?filteredData:data}

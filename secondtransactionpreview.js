@@ -78,7 +78,7 @@ style={{height:50,color:'white',width:Dimensions.get("screen"),marginBottom:12}}
       onChangeText={(query)=>filter(query)}
       value={searchQuery}
     />
-{user.data.length>0 &&<FlatList
+{data.length>0 &&<FlatList
 refreshing={refreshing}
 // onRefresh={()=>setData([...user.data])}
 data={searchQuery.length>0 && filteredData ?filteredData:data}

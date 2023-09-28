@@ -77,7 +77,7 @@ style={{height:50,color:'white'}}
       value={searchQuery}
     />
 
-{user.data.length>0 &&<FlatList
+{data.length>0 &&<FlatList
 refreshing={refreshing}
 
 onRefresh={()=>setData([...data])}
