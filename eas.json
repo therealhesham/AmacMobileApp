@@ -1,7 +1,11 @@
 {
   "build": {
-    "preview": {
+    "preview": {"env":{
+"REACT_APP_BASE_URL":"https://reactnativebackend.onrender.com"
+
+    },
       "android": {
+        
         "buildType": "apk"
       }
     },
