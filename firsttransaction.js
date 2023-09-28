@@ -180,7 +180,7 @@ console.log(details.admin)
         e.data == "error" ? toasterExistance("خطأ في تسجيل البيانات .. المهام غير متاحة بالمخزن او قد تكون اخترت وحدة غير مناسبة لقائمة الجرد..من فضلك الرجوع لقائمة الجرد من هنا ") : toasterDone("تم تسجيل البيانات بنجاح")})
       
     } catch (error) {
-      
+      toasterExistance("NetWork Problem")
     }
     
     }

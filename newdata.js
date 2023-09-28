@@ -8,6 +8,7 @@ import { Alert, Button, ImageBackground, Text, TextInput, TouchableOpacity, View
 import { Picker } from "@react-native-picker/picker";
 import AutocompleteInput from "react-native-autocomplete-input";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Dimensions } from "react-native";
 
 
 
@@ -32,10 +33,12 @@ const clear=()=>{
     setSuccess("تم تسجيل البيانات بنجاح")
     }
     
-const PostHandler = (e)=>{
+const PostHandler = async (e)=>{
+    const find = await AsyncStorage.getItem("authToken")
+    const details = jwtDecode(find)
+    if (!details.isAdmin) return ;
     
-    
-axios.post(`${process.env.REACT_APP_BASE_URL}/postnewdatatostore`,{items:items,store:store,type:type,quantity:Quantity},{withCredentials:true}).
+await axios.post(`${process.env.REACT_APP_BASE_URL}/postnewdatatostore`,{items:items,store:store,type:type,quantity:Quantity},{withCredentials:true}).
 then(e=>e.data == "success" ? clear() :setError("يرجى مراعاة ادخال البيانات الصحيحة"))
 
 }
@@ -43,9 +46,9 @@ then(e=>e.data == "success" ? clear() :setError("يرجى مراعاة ادخا�
 
 return(
 
-<View style={{paddingTop:120,backgroundColor:"white",margin:10,padding:30}}> 
+<View style={{paddingTop:Dimensions.get("screen").height/6,backgroundColor:"#ffffff",padding:30}}> 
     
-<Text style={{fontSize:19,textAlign:"center",color:"#D71313"}}>تسجيل بيانات الجرد</Text>
+<Text style={{fontSize:19,textAlign:"center",color:"red"}}>تسجيل بيانات الجرد</Text>
 <TextInput cursorColor="#D71313" focusable style={{paddingBottom:20}}  placeholder="المخزن" value={store} onChangeText={(e)=>setStore(e)}/>
 <TextInput cursorColor="#D71313" style={{paddingBottom:20}} placeholder="المهام"  value={items} onChangeText={(e)=>setItems(e)}/>
 <TextInput cursorColor="#D71313" style={{paddingBottom:20}}  placeholder="الوحدة"  value={type} onChangeText={(e)=> setType(e)}/>

@@ -75,7 +75,7 @@ setFilter(datas)
 const [itemsData,setItemData]=useState(100)
 
 const updateOne=async (e)=>{
-    console.log("updateOne",{id:e,store:store,items:itemsData,type:type,quantity:Quantity})
+    if(!Logger.isAdmin) return toasterExistance("You aren't authenticate to change or update data");
     await axios.post(`${REACT_APP_BASE_URL}/updatedata`,{id:e,store:store,items:itemsData,type:type,quantity:Quantity}).then((e) => e.data == "updated" ?  reset()  :setError("خطأ في البيانات") )
 
   }
@@ -99,7 +99,7 @@ const updateOne=async (e)=>{
         try {
             
         
-        if(!Logger.isAdmin) return toasterExistance("You aren't authenticate to change or update data")
+        if(!Logger.isAdmin) return toasterExistance("You aren't authenticate to change or update data");
         await axios.post(`${process.env.REACT_APP_BASE_URL}/delete`,{id:e},{withCredentials:true}).then((e) => console.log(e.data))
   const data = data.filter((s)=> e != s._id)
   const dataRe = [...data]
@@ -109,7 +109,7 @@ const updateOne=async (e)=>{
   }
       }
     const updating =useCallback((id,items,store,type,quantity)=>{
-        if(!Logger.isAdmin) return toasterExistance("You aren't authenticate to change or update data")
+        if(!Logger.isAdmin) return toasterExistance("You aren't authenticate to change or update data");
         setItemData(items);
         
             setStore(store);

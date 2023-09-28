@@ -57,17 +57,13 @@ try {
 
     const find = await AsyncStorage.getItem("authToken")
     const details = jwtDecode(find)
-    if (!details.isAdmin) return toasterExistance("only Admins can change and add new data")// try {
-    // console.log("sss")
+if (!details.isAdmin) return toasterExistance("only Admins can change and add new data")
 
-// } catch (error) {
-    
-// }
-    // const find = await AsyncStorage.getItem("authToken")
-    // const details = jwtDecode(find)
+  
 if (!from ||  !to || !quantity || !type || !items || !receipt ) return  toasterExistance("رجاء ملىء البيانات")
 if (from === to )   return toasterExistance("غير المخزن المحول منه او له") ;
- await axios.post(`${process.env.REACT_APP_BASE_URL}/thirdtransaction`,{receiptno:receipt,date:date,from:from,to:to,items:items,type:type,quantity:quantity}).then(e=>
+
+ await axios.post(`${process.env.REACT_APP_BASE_URL}/thirdtransaction`,{receiptno:receipt,date:date,from:from,to:to,items:items,unit:type,quantity:quantity}).then(e=>
     e.data == "error" ? toasterExistance("  خطأ في التسجيل ... المهام غير متاحة بالمخزن المحول اليه او قد يكون الكمية في المخزن المحول منه اقل من المطلوب ") : toasterDone("تم تسجيل البيانات بنجاح"))
  }catch (error) {
 

@@ -67,7 +67,7 @@ const postHandler =async(e)=>{
                )
                
     } catch (error) {
-        console.log("error")
+        toasterExistance("Network Problem")
     }
             
     }

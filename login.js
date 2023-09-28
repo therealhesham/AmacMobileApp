@@ -17,26 +17,19 @@ const Login = (props) => {
     
 
     const [error,setError]=useState()
-    const storage= async ()=>{
-try {
-    
-} catch (error) {
-    
-}
-        
-    }
             
             
     const postData    =async()=>{
 try {
     
-    const {data} =await axios.post(`https://reactnativebackend.onrender.com/login`,{email,password})
-    await AsyncStorage.setItem("authToken",data.authtoken)
+    const {data} =await axios.post(`https://reactnativebackend.onrender.com/login`,{email,password});
+    console.log(date);
+    await AsyncStorage.setItem("authToken",data.authtoken);
 // props.navigation.navigate("Home")
 authenticate.setUser(data.authtoken)
         
 } catch (error) {
-    
+    console.log(error)
 }
 
 }

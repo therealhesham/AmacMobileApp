@@ -2,9 +2,9 @@
 import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import {Button, Dimensions, Image, SafeAreaView, TextInput, View ,KeyboardAvoidingView} from "react-native"
+import {Button, Dimensions, Image, SafeAreaView, TextInput, View ,KeyboardAvoidingView ,StatusBar} from "react-native"
 import { RootSiblingParent } from 'react-native-root-siblings';
-import { StatusBar } from 'expo-status-bar';
+
 import HomeScreen from './Home';
 
 import { AppRegistry, StyleSheet } from 'react-native';
@@ -27,6 +27,7 @@ import jwtDecode from 'jwt-decode';
 import ExpoStatusBar from 'expo-status-bar/build/ExpoStatusBar';
 import axios from 'axios';
 // import { KeyboardAvoidingView } from 'react-native-web';
+import Toast from 'react-native-toast-message';
 
 
 const BASE_URL =process.env.REACT_APP_BASE_URL;
@@ -34,7 +35,7 @@ const BASE_URL =process.env.REACT_APP_BASE_URL;
 export default function App() {
   // setInterval(GetToken, 1000)  
 
-
+  const [notExist,setExistense]=useState(null)
   const [user,setUser]=useState("")
 const [data,setContextData]=useState([])
 const [contractor,setContractor]=useState([])
@@ -72,10 +73,23 @@ try {
       ,[])
                   
             
-    const postData    =async()=>{
+    
+  const toasterExistance= (e)=>{
+    setExistense(e);
+  Toast.show({text1:e,type:"error"});
+  // setFrom("")
+  // setTo("")
+  // setExistense("")
+  // setType("")
+  // setQuantity("")
+  // setItem("")
+
+}
+      const postData    =async()=>{
 try {
     
     const {data} =await axios.post(`https://reactnativebackend.onrender.com/login`,{email,password})
+    if (data === "dataNotFound") return toasterExistance("Email or Password isn't registered ")
     await AsyncStorage.setItem("authToken",data.authtoken)
 // props.navigation.navigate("Home")
 
@@ -85,7 +99,8 @@ setLogger(condes)
         
 
 } catch (error) {
-// console    
+toasterExistance("Network Error")
+  // console    
 }
 
 }
@@ -136,7 +151,8 @@ const jwtDetails=jwtDecode(logger)
 setLogger(jwtDetails)
   
   } catch (error) {
-    console.log(error)
+    
+    toasterExistance("please Log in")
     
     setLogger("")
     
@@ -220,10 +236,14 @@ return (
 <LoggedComponent logs={{Logger,setLogger}}/>:
 <auth.Provider value={{user,setUser}}>
 <SafeAreaView style={{backgroundColor:"white"}}>
-    
+{ notExist ? <Toast 
+        position='top'
+        topOffset={ StatusBar && StatusBar.currentHeight ? StatusBar.currentHeight+2 : 5} 
+
+      />:null}    
     {/* <TouchableOpacity style={{backgroundColor:"white"}}> */}
  <KeyboardAvoidingView   behavior="position" keyboardVerticalOffset={200} style={styles.container}>
- <View style={{alignItems:"center",flexDirection:"column"}} ><Image style={{width:100,height:101,marginBottom:1}} source={require('./assets/download.jpg')}  /></View>
+ <View style={{alignItems:"center",flexDirection:"column"}} ><Image style={{width:100,height:101,marginBottom:1,zIndex:-2000}} source={require('./assets/download.jpg')}  /></View>
  <TextInput  autoFocus
   placeholder= "  Email"  value={email} onChangeText={(e)=>setEmail(e)}
   style={{  borderRadius:19, backgroundColor: "lavender" , width:300 , height:35 , marginBottom:10}} secureTextEntry={false} />   
