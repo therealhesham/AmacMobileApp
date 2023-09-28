@@ -10,6 +10,7 @@ import axios from "axios";
 import Toast from 'react-native-toast-message'
 
 import ListComponen from "./firsttransactionmemo";
+import { ScrollView } from "react-native";
 
 const  Secondtransaction= () => {
 // const storeNames = useContext(storeNamesContext)
@@ -132,8 +133,9 @@ setToGetSpecificITems(mapper)
             }
     
     
-    return (  
-    <KeyboardAvoidingView behavior="position" style={{backgroundColor:"#ffffff",padding:30}}>
+    return ( 
+      <ScrollView horizontal={false} style={{flex: 1}}> 
+    <ScrollView behavior="position" style={{backgroundColor:"#ffffff",padding:30}}>
 
 <TextInput  keyboardType="numeric" value={receipt} placeholder="رقم الاذن" style={{backgroundColor:"#fff8f5",height:60,borderRadius:10}} onChangeText={e=>setReceipt(e)}/>
 
@@ -228,7 +230,7 @@ label="الموقع"
 onValueChange={(e)=>setlOcation(e)}
 >
 <Picker.Item value="" label="اختر الموقع" enabled={false}>اختر الموقع</Picker.Item>
-{placesData? placesData.map(e=><Picker.Item value={e.name} label={e.name} >{e.name}</Picker.Item>):null}
+{placesData? placesData.map(e=><Picker.Item key={e._id} value={e.name} label={e.name} >{e.name}</Picker.Item>):null}
 </Picker>
 
 
@@ -254,7 +256,7 @@ value={quantity} onChangeText={e=>setQuantity(e)}/>
 
 
 {specificitems.length >0?
-    <KeyboardAvoidingView
+    <View
 
 
 >
@@ -268,7 +270,7 @@ style={{height:50, marginBottom:3,opacity:.9}}
 
 <View >
   <FlatList
-          
+          scrollEnabled={false}
   
   initialNumToRender={2}
   
@@ -278,11 +280,11 @@ data={searchedData.length > 0 ?searchedData:specificitems}
 renderItem={e=> <ListComponen uniteGetter={(e,d)=>uniteGetter(e,d)} id={e.item._id}  key={e.item._id} item={e.item.items}/> }/>
 
  </View>
-    </ KeyboardAvoidingView>:""}
+    </View>:<Text>قائمة المهام ستظهر هنا بعد اختيار المخزن</Text>}
+</ScrollView>
 
 
-
-    </KeyboardAvoidingView>);
+    </ScrollView>);
 }
  
 export default Secondtransaction;

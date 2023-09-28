@@ -10,6 +10,7 @@ import { Searchbar } from "react-native-paper";
 import ListComponen from "./firsttransactionmemo";
 import { FlatList } from "react-native-gesture-handler";
 import Toast from "react-native-toast-message";
+import { ScrollView } from "react-native";
 
 
 
@@ -139,7 +140,8 @@ const Search = (E)=>{
         }
 
 return(
-<KeyboardAvoidingView behavior="position" style={{backgroundColor:"#ffffff",padding:30}}>
+    <ScrollView horizontal={false} style={{flex: 1}}> 
+    <ScrollView behavior="position" style={{backgroundColor:"#ffffff",padding:30}}>
 
 <TextInput placeholder="رقم الاذن" value={receipt} onChangeText={e=>setReceipt(e)}/>
 
@@ -205,7 +207,7 @@ onValueChange={(value)=>{
 
    
 {specificitems.length >0?
-    <KeyboardAvoidingView
+    <View
 
 
 >
@@ -220,7 +222,7 @@ style={{height:50, marginBottom:3,opacity:.9}}
 
 <View >
   <FlatList
-          
+          scrollEnabled={false}
 // initialNumToRende={10}
 //   maxToRenderPerBatch={10}
   initialNumToRender={2}
@@ -231,12 +233,10 @@ data={searchedData.length > 0 ?searchedData:specificitems}
 renderItem={e=> <ListComponen uniteGetter={(e,d)=>uniteGetter(e,d)} id={e.item._id}  item={e.item.items}/> }/>
 
  </View>
-    </ KeyboardAvoidingView>:""}
+ </View>:<Text>قائمة المهام ستظهر هنا بعد اختيار المخزن</Text>}
+</ScrollView>
 
-
-
-</KeyboardAvoidingView> 
-
+    </ScrollView>
 
 
 

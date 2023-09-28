@@ -6,7 +6,7 @@ import ListComponen from './firsttransactionmemo';
 import DateTimePicker ,{DateTimePickerAndroid} from '@react-native-community/datetimepicker';
 import jwtDecode from "jwt-decode";
 import { useRef } from "react";
-import { Alert, Button, KeyboardAvoidingView,ImageBackground,Text, TextInput, View,FlatList, Pressable, TouchableOpacity } from "react-native";
+import { Alert, Button, KeyboardAvoidingView,ImageBackground,Text, TextInput, View,FlatList, Pressable, TouchableOpacity, Modal, ScrollView } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import AutocompleteInput from "react-native-autocomplete-input";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -72,11 +72,11 @@ const [storeNames,setStoreNames]=useState([])
 const [data,setData]=useState([])
 const [done,setDone]=useState(null)
 const [alert,setAlert] = useState("")
-const [receipt,setReceipt]=useState(null)
+const [receipt,setReceipt]=useState(0)
 const [specificitems,setToGetSpecificITems]=useState([])
 const [timestamp ,settimeStamp]=useState(1616608200000)
 // const [date, setDate] = useState(new Date().toString());
-const [date, setDate] = useState(new Date());
+const [date, setDate] = useState("");
 const [specificUnite,setSpecificUnite]=useState({})
 const usecontext = useContext(Datacontext)
 const useNameStoreContext=useContext(storeNamesContext)
@@ -204,9 +204,12 @@ setDestination(e)
  }
 
 
+ 
 return(
+
   // const [searchQuery, setSearchQuery] = useState('');
-< KeyboardAvoidingView behavior="position"  style={{padding:30 ,backgroundColor:"#ffffff",flex:1,justifyContent:"flex-start"}}>
+  <ScrollView horizontal={false} style={{flex: 1}}>
+<ScrollView  style={{padding:30 ,backgroundColor:"#ffffff",flex:1}}>
 
 
 <TextInput ref={receiptRef}  autoFocus    style={{ opacity:1 ,right:"auto",height:50 , opacity:1,borderRadius:6,backgroundColor:"#fff8f5"}}
@@ -320,7 +323,7 @@ onValueChange={(itemValue, itemIndex) =>
 {/* <button style={{backgroundColor:"blue",color:"white"}} onClick={postHandler}>تسجيل بيانات</button> */}
 
   {specificitems.length >0?
-    <KeyboardAvoidingView behavior="height">
+    <View>
 
 
 
@@ -334,8 +337,8 @@ style={{height:50, marginBottom:3,opacity:.9}}
 
 <View  >
   <FlatList
-          
-  
+          scrollEnabled={false}
+  ListHeaderComponent={()=>{}}
   initialNumToRender={2}
   
    style={{height:200 }} 
@@ -344,8 +347,9 @@ data={searchedData.length > 0 ?searchedData:specificitems}
 renderItem={e=> <ListComponen uniteGetter={(e,d)=>uniteGetter(e,d)} id={e.item._id}  item={e.item.items}/> }/>
 
  </View>
-    </ KeyboardAvoidingView>:""}
-    </KeyboardAvoidingView>
+    </View>:<Text>قائمة المهام ستظهر هنا بعد اختيار المخزن</Text>}
+    </ScrollView>
+    </ScrollView>
 )    
 }
 

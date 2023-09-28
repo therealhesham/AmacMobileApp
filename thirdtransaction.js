@@ -11,6 +11,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from 'react-native-toast-message'
 import ListComponen from "./firsttransactionmemo";
 import {  Searchbar } from 'react-native-paper'
+import { ScrollView } from "react-native";
+
 
 
 
@@ -121,8 +123,8 @@ Toast.show({
     
     // specificitems.length=10
 return (
- 
-<KeyboardAvoidingView behavior="position"  style={{backgroundColor:"#ffffff",padding:30}}>
+    <ScrollView horizontal={false} style={{flex: 1}}> 
+    <ScrollView behavior="position" style={{backgroundColor:"#ffffff",padding:30}}>
 
 <TextInput placeholder="رقم الاذن" keyboardType="numeric" value={receipt}  onChangeText={e=>setReceipt(e)}/>
 
@@ -191,7 +193,7 @@ setTo(value)
 
    
 {specificitems.length >0?
-    <KeyboardAvoidingView
+    <View
 
 
 >
@@ -206,7 +208,7 @@ style={{height:50, marginBottom:3,opacity:.9}}
 
 <View >
   <FlatList
-          
+         scrollEnabled={false} 
 // initialNumToRende={10}
 //   maxToRenderPerBatch={10}
   initialNumToRender={2}
@@ -214,14 +216,13 @@ style={{height:50, marginBottom:3,opacity:.9}}
    style={{height:200 }} 
 keyExtractor={(e,index)=>e._id}
 data={searchedData.length > 0 ?searchedData:specificitems}
-renderItem={e=> <ListComponen uniteGetter={(e,d)=>uniteGetter(e,d)} id={e.item._id}  item={e.item.items}/> }/>
+renderItem={e=> <ListComponen uniteGetter={(e,d)=>uniteGetter(e,d)} id={e.item._id} key={e.item._id} item={e.item.items}/> }/>
 
  </View>
-    </ KeyboardAvoidingView>:""}
+    </ View>:<Text>قائمة المهام ستظهر هنا بعد اختيار المخزن</Text>}
+</ScrollView>
 
-
-
-    </KeyboardAvoidingView>
+    </ScrollView>
 
 )
 
