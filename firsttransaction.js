@@ -150,7 +150,7 @@ function openUnitRef() {
       setType(mapper[0].type)
        
     } catch (error) {
-      toasterExistance(` المهام غير موجودة في مخزن ${destination}`)
+      toasterExistance(` المهام غير موجودة في ${destination}`)
     }
     }
     
@@ -182,21 +182,16 @@ console.log(details.admin)
     } catch (error) {
       toasterExistance("NetWork Problem")
     }
+
     
     }
     const[searcher,setSearcher]=useState(null)
+    const [querySource,setQuerySource]=useState("")
+    const [filteredData,setFilteredData]=useState([])
+
  const getSpecificData =  (e)   =>{
   
   try {
-    
-    const changedate =(e)=>{
-      const timestamp = e; // example timestamp
-      const date = new Date(timestamp);
-      const options = { year: 'numeric', month: 'long', day: 'numeric' };
-      const formattedDate = new Intl.DateTimeFormat('en-US', options).format(date);
-      setDate(formattedDate)
-      
-      }    
   
 const mapper = data.filter(s=>s.store === e)
 setToGetSpecificITems(mapper)
@@ -208,12 +203,10 @@ setDestination(e)
     
  }
 
-      const [querySource,setQuerySource]=useState("")
-       const [filteredData,setFilteredData]=useState([])
 
 return(
   // const [searchQuery, setSearchQuery] = useState('');
-< View style={{padding:30 ,backgroundColor:"white",flex:1,justifyContent:"flex-start"}}>
+< KeyboardAvoidingView behavior="position"  style={{padding:30 ,backgroundColor:"#ffffff",flex:1,justifyContent:"flex-start"}}>
 
 
 <TextInput ref={receiptRef}  autoFocus    style={{ opacity:1 ,right:"auto",height:50 , opacity:1,borderRadius:6,backgroundColor:"#fff8f5"}}
@@ -251,7 +244,6 @@ inputStyle={{alignItems:"center",zIndex:1}}
   onValueChange={(itemValue, itemIndex) =>
     getSpecificData(itemValue)
 } 
-   
    >
   
   
@@ -328,10 +320,10 @@ onValueChange={(itemValue, itemIndex) =>
 {/* <button style={{backgroundColor:"blue",color:"white"}} onClick={postHandler}>تسجيل بيانات</button> */}
 
   {specificitems.length >0?
-    <View
+    <KeyboardAvoidingView behavior="height">
 
 
->
+
 <Searchbar
 style={{height:50, marginBottom:3,opacity:.9}}
       placeholder="بحث"
@@ -340,7 +332,7 @@ style={{height:50, marginBottom:3,opacity:.9}}
     />
 
 
-<View >
+<View  >
   <FlatList
           
   
@@ -352,8 +344,8 @@ data={searchedData.length > 0 ?searchedData:specificitems}
 renderItem={e=> <ListComponen uniteGetter={(e,d)=>uniteGetter(e,d)} id={e.item._id}  item={e.item.items}/> }/>
 
  </View>
-    </ View>:""}
-    </View>
+    </ KeyboardAvoidingView>:""}
+    </KeyboardAvoidingView>
 )    
 }
 

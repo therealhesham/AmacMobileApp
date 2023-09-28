@@ -122,7 +122,7 @@ Toast.show({
     // specificitems.length=10
 return (
  
-<View style={{backgroundColor:"#ffffff",padding:5}}>
+<KeyboardAvoidingView behavior="position"  style={{backgroundColor:"#ffffff",padding:30}}>
 
 <TextInput placeholder="رقم الاذن" keyboardType="numeric" value={receipt}  onChangeText={e=>setReceipt(e)}/>
 
@@ -221,7 +221,7 @@ renderItem={e=> <ListComponen uniteGetter={(e,d)=>uniteGetter(e,d)} id={e.item._
 
 
 
-    </View>
+    </KeyboardAvoidingView>
 
 )
 

@@ -139,7 +139,7 @@ const Search = (E)=>{
         }
 
 return(
-<SafeAreaView style={{backgroundColor:"#ffffff",padding:5}}>
+<KeyboardAvoidingView behavior="position" style={{backgroundColor:"#ffffff",padding:5}}>
 
 <TextInput placeholder="رقم الاذن" value={receipt} onChangeText={e=>setReceipt(e)}/>
 
@@ -235,7 +235,7 @@ renderItem={e=> <ListComponen uniteGetter={(e,d)=>uniteGetter(e,d)} id={e.item._
 
 
 
-</SafeAreaView> 
+</KeyboardAvoidingView> 
 
 
 

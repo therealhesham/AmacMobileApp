@@ -133,7 +133,7 @@ setToGetSpecificITems(mapper)
     
     
     return (  
-    <SafeAreaView style={{backgroundColor:"#ffffff",padding:3}}>
+    <KeyboardAvoidingView behavior="position" style={{backgroundColor:"#ffffff",padding:30}}>
 
 <TextInput  keyboardType="numeric" value={receipt} placeholder="رقم الاذن" style={{backgroundColor:"#fff8f5",height:60,borderRadius:10}} onChangeText={e=>setReceipt(e)}/>
 
@@ -282,7 +282,7 @@ renderItem={e=> <ListComponen uniteGetter={(e,d)=>uniteGetter(e,d)} id={e.item._
 
 
 
-    </SafeAreaView>);
+    </KeyboardAvoidingView>);
 }
  
 export default Secondtransaction;
