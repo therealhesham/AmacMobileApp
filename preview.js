@@ -53,7 +53,10 @@ console.log("")
     
   
   }
-  
+  const reset =()=>{
+
+    setUpdater(0)
+  }
   
     useEffect(()=>{
         GetToken();
@@ -75,8 +78,10 @@ setFilter(datas)
 const [itemsData,setItemData]=useState(100)
 
 const updateOne=async (e)=>{
-    if(!Logger.isAdmin) return toasterExistance("You aren't authenticate to change or update data");
-    await axios.post(`${REACT_APP_BASE_URL}/updatedata`,{id:e,store:store,items:itemsData,type:type,quantity:Quantity}).then((e) => e.data == "updated" ?  reset()  :setError("خطأ في البيانات") )
+    if(!Logger.isAdmin) { toasterExistance("You aren't authenticate to change or update data");
+  
+  }
+    await axios.post(`https://reactnativebackend.onrender.com/updatedata`,{id:e,store:store,items:itemsData,type:type,quantity:Quantity}).then((e) => e.data == "updated" ?  reset()  :setError("خطأ في البيانات") )
 
   }
 

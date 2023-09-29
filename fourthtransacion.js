@@ -74,6 +74,7 @@ fetchStores()
   const getSpecificData = async (e)   =>{
   
     try {
+      setSearchData("")
       console.log(e)
         //   setDestination(e)
         setContractor(e)        

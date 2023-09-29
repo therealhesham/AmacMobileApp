@@ -74,7 +74,8 @@ if (from === to )   return toasterExistance("غير المخزن المحول م
 }
 
 const getSpecificData =  (e)   =>{
-    setFrom(e)        
+  setSearchData("")  
+  setFrom(e)        
     const mapper = data.filter(s=>s.store === e)
     setToGetSpecificITems(mapper)
    

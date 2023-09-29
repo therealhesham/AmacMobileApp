@@ -98,7 +98,7 @@ settypeOfContracting("")
     const getSpecificData = async (e)   =>{
   
         try {
-          
+          setSearchData("")
             //   setDestination(e)
             setFrom(e)        
 const mapper = data.filter(s=>s.store === e)

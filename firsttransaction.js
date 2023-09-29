@@ -56,7 +56,7 @@ const ref = useRef(0)
 const [transactionType,setTransactionType]=useState("")
 const[from,setFrom]=useState("")
 const refFocus =useRef()
-const [searchQuery, setSearchQuery] = useState([]);
+const [searchQuery, setSearchQuery] = useState("");
 const[to,setTo]=useState("")
 const[type,setType]=useState("")
 const [unit,setUnit]=useState([])
@@ -97,7 +97,7 @@ function closeRefPicker() {
   receiptRef.current.blur();
 }
  const Search = (E)=>{
-    
+  
     
     // console.log(`${s.target.value}`.trim());
     const mapper = specificitems.filter(e=>e.items.includes(E))
@@ -192,7 +192,7 @@ console.log(details.admin)
  const getSpecificData =  (e)   =>{
   
   try {
-  
+    setSearchData("")
 const mapper = data.filter(s=>s.store === e)
 setToGetSpecificITems(mapper)
 setDestination(e)
@@ -331,7 +331,7 @@ onValueChange={(itemValue, itemIndex) =>
 style={{height:50, marginBottom:3,opacity:.9}}
       placeholder="بحث"
       onChangeText={(query)=>Search(query)}
-      // value={searchQuery}
+      
     />
 
 
