@@ -174,7 +174,7 @@ const updateOne=async (e)=>{
 }
 const [refreshing,setRefresh]=useState(false)
 
-return (<SafeAreaView style={{width:Dimensions.get("screen"),backgroundColor:"#ffffff"
+return (<SafeAreaView style={{width:Dimensions.get("screen"),backgroundColor:"#ffffff",flex:1
 }}>
     
 <Searchbar
@@ -184,6 +184,7 @@ style={{height:50, marginBottom:3,opacity:.9}}
       value={searchQuery}
     />
 {data.length>0 &&<FlatList
+contentContainerStyle={{ paddingBottom: 20 }}
 refreshing={refreshing}
 ItemSeparatorComponent={<LinearGradient colors={["#8e9eab","#eef2f3"]} ><View style={{height:2}}></View></LinearGradient>}
 onRefresh={()=>setData([...data])}
