@@ -72,8 +72,14 @@ function filter(e){
 
  const datas =data.filter(e=>e.items.includes(searchQuery))
 setFilter(datas)
-        
-}        
+        console.log(filteredData)
+}    
+
+function filterbystore(s){
+const newfiltered = filteredData.filter(e=>e.store.includes(s)) 
+setFilter(newfiltered)
+}    
+
      // console.log(data)
 const [itemsData,setItemData]=useState(100)
 
@@ -183,6 +189,14 @@ style={{height:50, marginBottom:3,opacity:.9}}
       onChangeText={(query)=>filter(query)}
       value={searchQuery}
     />
+
+    {/* <Searchbar
+style={{height:50, marginBottom:3,opacity:.9}}
+      placeholder="بحث باسم المخزن"
+      onChangeText={(query)=>filterbystore(query)}
+      value={searchByStoreQuery}
+    /> */}
+
 {data.length>0 &&<FlatList
 contentContainerStyle={{ paddingBottom: 20 }}
 refreshing={refreshing}
