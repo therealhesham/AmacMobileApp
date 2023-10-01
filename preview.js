@@ -5,34 +5,45 @@ import {  Searchbar } from 'react-native-paper'
 import { create } from "apisauce";
 import axios, { Axios } from "axios";
 import { useCallback, useContext, useEffect, useState } from "react";
-import { Button,Dimensions, FlatList, Pressable, SafeAreaView, Text, TextInput, TouchableOpacity, View, useWindowDimensions } from "react-native";
-import { Datacontext } from './datacontext';
+import { ActivityIndicator, Button,Dimensions, FlatList, Pressable, SafeAreaView, Text, TextInput, TouchableOpacity, View, useWindowDimensions } from "react-native";
+import { Datacontext, storeNamesContext } from './datacontext';
 import { Swipeable } from 'react-native-gesture-handler';
 import { LinearGradient } from 'expo-linear-gradient';
-// useEffectTe
-
-// Text
 import Toast from 'react-native-toast-message';
 import jwtDecode from 'jwt-decode';
+
+import DatePicker from 'react-native-datepicker';
+import { Picker } from "@react-native-picker/picker";
 const Preview = () => {
 const user=useContext(Datacontext)
 const [data,setData]=useState([])
 const [updater,setUpdater]=useState("")
-// create("")
 const [items,setItems] = useState("")
 const [store,setStore]=useState("")
 const [type,setType]=useState("")
 const [Quantity,setQuantity]=useState("")
 const [Jwt,setJwt]=useState("")
-
 const [Logger,setLogger]=useState({})
 const [searchQuery, setSearchQuery] = useState('');
 const [filteredData,setFilter]=useState([])
 const [notExist,setExistense]=useState(null);
+const [queryStore,setQueryStore]=useState("")
+const getStores =useContext(storeNamesContext)
 const getter = async()=>{
-// axios.get
-const fff =await Network.getIpAddressAsync()
-await fetch(`https://reactnativebackend.onrender.com/preview`,{method:"get"}).then(e=>e.json()).then(e=>setData(e))
+  try {
+    const AWAITER =await AsyncStorage.getItem("bigData") 
+    AWAITER.length > 0  ? setData(JSON.parse(AWAITER).filter(e=>e.store.includes(queryStore))) : console.log("ss")
+  } catch (error) {
+    setSearchQuery("")
+    const fff =await Network.getIpAddressAsync()
+    const dataFetcher = await fetch(`https://reactnativebackend.onrender.com/preview`,{method:"get"}).then(e=>e.json())
+    await AsyncStorage.setItem("bigData",JSON.stringify(dataFetcher))
+    setData(dataFetcher)
+    queryStore.length>0 ? setData(dataFetcher.filter(e=>e.store.includes(queryStore))) : ""
+        
+  }
+  // if ()
+
 }
 
 
@@ -57,22 +68,24 @@ console.log("")
 
     setUpdater(0)
   }
+
   
     useEffect(()=>{
-        GetToken();
+// fetchStores()
+      GetToken();
         getter()   ;   
 
 //   .get('/').then(response => console.log(response))//
 //   .then(e=>console.log(e))
         
-     },[])
+     },[queryStore])
 function filter(e){
 
     setSearchQuery(e)
 
  const datas =data.filter(e=>e.items.includes(searchQuery))
 setFilter(datas)
-        console.log(filteredData)
+        
 }    
 
 function filterbystore(s){
@@ -189,15 +202,24 @@ style={{height:50, marginBottom:3,opacity:.9}}
       onChangeText={(query)=>filter(query)}
       value={searchQuery}
     />
+<Picker style={{marginTop:3,opacity:1} }
+  
 
-    {/* <Searchbar
-style={{height:50, marginBottom:3,opacity:.9}}
-      placeholder="بحث باسم المخزن"
-      onChangeText={(query)=>filterbystore(query)}
-      value={searchByStoreQuery}
-    /> */}
+  // ref={pickerRef}
+  selectedValue={queryStore}
+  onValueChange={(itemValue, itemIndex) =>{
+    setData([])
+    setQueryStore(itemValue)}
+  }>
+<Picker.Item label="  اختر من القائمة مصدر الوارد"  style={{height:50 , opacity:1,borderRadius:6,backgroundColor:"#fff8f5"}} enabled={false} key={1}  />
+    {getStores.storeFetcher.map(e=><Picker.Item label={e.name}  style={{height:50 , opacity:1,borderRadius:6,backgroundColor:"#fff8f5"}}  key={e._id} value={e.name} />)}
 
-{data.length>0 &&<FlatList
+
+
+</Picker>
+
+    
+{data.length>0 ?<FlatList
 contentContainerStyle={{ paddingBottom: 20 }}
 refreshing={refreshing}
 ItemSeparatorComponent={<LinearGradient colors={["#8e9eab","#eef2f3"]} ><View style={{height:2}}></View></LinearGradient>}
@@ -205,7 +227,8 @@ onRefresh={()=>setData([...data])}
 data={searchQuery.length>0 && filteredData ?filteredData:data}
 renderItem={e=> <ItemComponents    id={e.item._id} itemData={e.item.items} quantity={e.item.quantity} store={e.item.store} type={e.item.type } />}
 keyExtractor={(e,index)=>e._id}/>
-}
+:<View><Text> <ActivityIndicator color="red" size="large" />
+قد لا يشمل المخزن اي مهام حتى الان</Text></View>}
 
 
 </SafeAreaView>  );

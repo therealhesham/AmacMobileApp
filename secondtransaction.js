@@ -39,6 +39,7 @@ const [contractorNames,setContractorNames]=useState([])
 
 
 const fetchStores = async()=>{
+
   await fetch(`https://reactnativebackend.onrender.com/listofnames`,{method:"get"}).then(e=>e.json()).then(e=> setContractorNames(e))
  await fetch(`https://reactnativebackend.onrender.com/listofplaces`,{method:"get"}).then(e=>e.json()).then(e=> setPlacesData(e));
  await fetch(`https://reactnativebackend.onrender.com/preview`,{method:"get"}).then(e=>e.json()).then(e=> setData(e));
@@ -114,18 +115,21 @@ setToGetSpecificITems(mapper)
        }
        const uniteGetter=(n,s)=>{
         try {
+                  
           setItems(s)
           const mapper= specificitems.filter(e=>e._id == n );
           setType(mapper[0].type)
-           
-        } catch (error) {
+          setSearchQuery(mapper[0].items)
+          setSearchData([])
+          toasterExistance(` ${mapper[0].store}  يتضمن ${mapper[0].quantity} ${mapper[0].type} من المهام المحددة`)      
+        } catch(error) {
           toasterExistance("المهام غير موجودة")
         }
         }
         
        const Search = (E)=>{
     
-    
+    setSearchQuery(E)
     
         const mapper = specificitems.filter(e=>e.items.includes(E))
     
@@ -134,8 +138,8 @@ setToGetSpecificITems(mapper)
     
     
     return ( 
-      <ScrollView horizontal={false} style={{flex: 1}}> 
-    <ScrollView behavior="position" style={{backgroundColor:"#ffffff",padding:30}}>
+      // <ScrollView horizontal={false} style={{flex: 1}}> 
+    <View style={{backgroundColor:"#ffffff",padding:30}}>
 
 <TextInput  keyboardType="numeric" value={receipt} placeholder="رقم الاذن" style={{backgroundColor:"#fff8f5",height:60,borderRadius:10}} onChangeText={e=>setReceipt(e)}/>
 
@@ -160,7 +164,40 @@ setToGetSpecificITems(mapper)
 
 
 </Picker>
+{from?<Searchbar
 
+onClearIconPress={()=>
+  {setType("")
+  setItems("")
+  setSearchData([])}}
+style={{height: 50, marginBottom:3,opacity:.4,borderRadius:2,backgroundColor:"white"}}
+      placeholder="اكتب اسم المهام وانتظر الاقتراحات"
+      onChangeText={(query)=>Search(query)}
+      value={searchQuery}
+    
+    />
+
+:<Text>اختيار المخزن لاظهار قائمة المهام تلقائيا</Text>}
+
+<View >
+  <FlatList
+          // scrollEnabled={true}
+  // horizontal={true}
+  initialNumToRender={10}
+  
+   style={{ backgroundColor:"white",zIndex:10,elevation:50}} 
+keyExtractor={(e,index)=>e._id}
+data={searchedData.length > 0 ?searchedData:[]}
+renderItem={e=> <ListComponen uniteGetter={(e,d)=>uniteGetter(e,d)} setSpecificItem={setToGetSpecificITems} id={e.item._id}  key={e.item._id} item={e.item.items}/> }/>
+
+ </View>
+
+
+
+ <View style={{width:300,alignSelf:"center"}}>
+{items?<Text style={{height:50, opacity:1,borderRadius:6,backgroundColor:"#fff8f5"}}>{items}</Text>:null}
+{type?<Text style={{height:50 , opacity:1,borderRadius:6,backgroundColor:"#fff8f5"}}>{type}</Text>:null}
+</View>
 
 
 
@@ -216,13 +253,6 @@ onValueChange={(e)=>settypeOfContracting(e)}
 
 : null }
 
-
-
-<View style={{width:300,alignSelf:"center"}}>
-{items?<Text style={{height:50, opacity:1,borderRadius:6,backgroundColor:"#fff8f5"}}>{items}</Text>:null}
-{type?<Text style={{height:50 , opacity:1,borderRadius:6,backgroundColor:"#fff8f5"}}>{type}</Text>:null}
-</View>
-
 <Picker
 placeholder="الموقع"
 selectedValue={lOcation}
@@ -237,8 +267,8 @@ onValueChange={(e)=>setlOcation(e)}
 
  
 
-<TextInput  label="الكمية" 
-value={quantity} onChangeText={e=>setQuantity(e)}/>
+<TextInput  label="الكمية" placeholder="الكمية"
+value={quantity} onChangeText={e=>setQuantity(e)} style={{ opacity:1 ,right:"auto",height:50 , opacity:1,borderRadius:6,backgroundColor:"#fff8f5"}}  />
 
 
 { notExist ? <Toast onPress={()=>Toast.hide()}
@@ -255,36 +285,11 @@ value={quantity} onChangeText={e=>setQuantity(e)}/>
 <Button    title="تسجيل بيانات" onPress={postHandler} >تسجيل بيانات</Button> 
 
 
-{specificitems.length >0?
-    <View
+</View>
 
 
->
-<Searchbar
-style={{height:50, marginBottom:3,opacity:.9}}
-      placeholder="بحث"
-      onChangeText={(query)=>Search(query)}
-      // value={searchQuery}
-    />
-
-
-<View >
-  <FlatList
-          scrollEnabled={false}
-  
-  initialNumToRender={2}
-  
-   style={{height:200 }} 
-keyExtractor={(e,index)=>e._id}
-data={searchedData.length > 0 ?searchedData:specificitems}
-renderItem={e=> <ListComponen uniteGetter={(e,d)=>uniteGetter(e,d)} id={e.item._id}  key={e.item._id} item={e.item.items}/> }/>
-
- </View>
-    </View>:<Text>قائمة المهام ستظهر هنا بعد اختيار المخزن</Text>}
-</ScrollView>
-
-
-    </ScrollView>);
+    // </ScrollView>
+    );
 }
  
 export default Secondtransaction;

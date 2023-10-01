@@ -42,13 +42,17 @@ const [contractor,setContractor]=useState([])
 const [storeName,setStoreNames]=useState([])
 const Stack = createStackNavigator()
 const [notificationsToken,setNotifcationsToken]=useState('')
-
+const [storeFetcher,setStorefetcher]=useState([])
 const [Jwt,setJwt]=useState("")
-
+// const storeNames = useContext(storeNamesContext)
 const [Logger,setLogger]=useState({})
 const[authName,setAuthName]=useState(Logger)
 const ref =useRef(0)
 
+fetchStores = async()=>{
+  await fetch(`https://reactnativebackend.onrender.com/listofstores`,{method:"get"}).then(e=>e.json()).then(e=> setStorefetcher(e))
+   
+  }
 
     const [email,setEmail]=useState("")
     const [password,setPassword]=useState("")
@@ -66,7 +70,7 @@ try {
     }
     // setTimeout (()=>GetToken,1000) 
     useEffect(()=>{
-
+fetchStores()
       GetToken()
          }
       
@@ -172,7 +176,7 @@ function LoggedComponent (props){
    
 
       <NavigationContainer  independent={true}  >
-
+      <storeNamesContext.Provider value={{storeFetcher,setStorefetcher}}>
     <Datacontext.Provider value={{data,setContextData}}>
     <contractorsContext.Provider value={{contractor,setContractor}}> 
 <auth.Provider value={props}>
@@ -197,7 +201,7 @@ function LoggedComponent (props){
         </auth.Provider>      
         </contractorsContext.Provider>
       </Datacontext.Provider>
-
+      </storeNamesContext.Provider>
         </NavigationContainer>  
 
       

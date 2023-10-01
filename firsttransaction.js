@@ -17,6 +17,8 @@ import {  Searchbar } from 'react-native-paper';
 export default function FirstTransaction(props){
   
   const toasterExistance= (e)=>{
+    console.log(e)
+    setExistense(e);
     setExistense(e);
   Toast.show({text1:e,type:"error"});
   // setFrom("")
@@ -27,6 +29,9 @@ export default function FirstTransaction(props){
   // setItem("")
 
 }
+
+
+
   const toasterDone =(e)=>{
     Clear()
     setDone(e)
@@ -97,7 +102,7 @@ function closeRefPicker() {
   receiptRef.current.blur();
 }
  const Search = (E)=>{
-  
+  setSearchQuery(E)
     
     // console.log(`${s.target.value}`.trim());
     const mapper = specificitems.filter(e=>e.items.includes(E))
@@ -131,8 +136,6 @@ fetchStores()
 
         },[])
 
-console.log(date)
-
 
 const pickUnitRef= useRef();
 
@@ -144,13 +147,18 @@ function openUnitRef() {
     pickUnitRef.current.blur();
   }
   const uniteGetter=(n,s)=>{
+    
     try {
+
+          
       setItem(s)
       const mapper= specificitems.filter(e=>e._id == n );
       setType(mapper[0].type)
-       
-    } catch (error) {
-      toasterExistance(` المهام غير موجودة في ${destination}`)
+      setSearchQuery(mapper[0].items)
+      setSearchData([])
+    toasterExistance(`${mapper[0].store}  يتضمن ${mapper[0].quantity} ${mapper[0].type} من المهام المحددة`)
+    } catch(error) {
+      toasterExistance("المهام غير موجودة")
     }
     }
     
@@ -192,10 +200,12 @@ console.log(details.admin)
  const getSpecificData =  (e)   =>{
   
   try {
-    setSearchData("")
+  
+    setSearchData([])
 const mapper = data.filter(s=>s.store === e)
 setToGetSpecificITems(mapper)
 setDestination(e)
+
   } catch (error) {
     console.log(error)
   }
@@ -207,9 +217,9 @@ setDestination(e)
  
 return(
 
-  // const [searchQuery, setSearchQuery] = useState('');
-  <ScrollView horizontal={false} style={{flex: 1}}>
-<ScrollView  style={{padding:30 ,backgroundColor:"#ffffff",flex:1}}>
+  
+  // <ScrollView horizontal={false} style={{flex: 1}}>
+<View  style={{padding:30 ,backgroundColor:"#ffffff",flex:1}}>
 
 
 <TextInput ref={receiptRef}  autoFocus    style={{ opacity:1 ,right:"auto",height:50 , opacity:1,borderRadius:6,backgroundColor:"#fff8f5"}}
@@ -245,7 +255,8 @@ inputStyle={{alignItems:"center",zIndex:1}}
   ref={pickerRefDestination}
   selectedValue={destination}
   onValueChange={(itemValue, itemIndex) =>
-    getSpecificData(itemValue)
+  {setDestination(itemValue)
+    getSpecificData(itemValue)}
 } 
    >
   
@@ -257,6 +268,35 @@ inputStyle={{alignItems:"center",zIndex:1}}
 
 
 </Picker>
+
+
+{destination?<Searchbar
+
+onClearIconPress={()=>{setItem("")
+ setType("")
+ setSearchData([])}}
+style={{height: 50, marginBottom:3,opacity:.4,borderRadius:2,backgroundColor:"white"}}
+      placeholder="اكتب اسم المهام وانتظر الاقتراحات"
+      onChangeText={(query)=>Search(query)}
+      value={searchQuery}
+    
+    />
+
+:<Text>اختيار المخزن لاظهار قائمة المهام تلقائيا</Text>}
+
+<View >
+  <FlatList
+          // scrollEnabled={true}
+  // horizontal={true}
+  initialNumToRender={10}
+  
+   style={{ backgroundColor:"white",zIndex:10,elevation:50}} 
+keyExtractor={(e,index)=>e._id}
+data={searchedData.length > 0 ?searchedData:[]}
+renderItem={e=> <ListComponen uniteGetter={(e,d)=>uniteGetter(e,d)} setSpecificItem={setToGetSpecificITems} id={e.item._id}  key={e.item._id} item={e.item.items}/> }/>
+
+ </View>
+
 <View style={{alignSelf:"center"}}>
 {item?<Text style={{height:50 , opacity:1,borderRadius:6,backgroundColor:"#ffffff"}}>{item}</Text>:null}
 {type?<Text style={{height:50 , opacity:1,borderRadius:6,backgroundColor:"#ffffff"}}>{type}</Text>:null}
@@ -309,10 +349,11 @@ onValueChange={(itemValue, itemIndex) =>
 <TextInput placeholder="ادخل الكمية  "  style={{height:50 , opacity:1,borderRadius:6,backgroundColor:"#fff8f5"}} keyboardType="numeric" onChangeText={e=>setQuantity(e)} value={quantity}/>
 { notExist ? <Toast 
         position='top'
-        topOffset={3} onHide={()=> clearProps()}
+        topOffset={4} onHide={()=> clearProps()}
 
       />:null}
     { done ? <Toast 
+    
         position='top'
         topOffset={3}
 
@@ -320,36 +361,9 @@ onValueChange={(itemValue, itemIndex) =>
 
 <Button color="red" title="تسجيل البيانات" onPress={postHandler} /> 
 
-{/* <button style={{backgroundColor:"blue",color:"white"}} onClick={postHandler}>تسجيل بيانات</button> */}
 
-  {specificitems.length >0?
-    <View>
-
-
-
-<Searchbar
-style={{height:50, marginBottom:3,opacity:.9}}
-      placeholder="بحث"
-      onChangeText={(query)=>Search(query)}
-      
-    />
-
-
-<View  >
-  <FlatList
-          scrollEnabled={false}
-  ListHeaderComponent={()=>{}}
-  initialNumToRender={2}
-  
-   style={{height:200 }} 
-keyExtractor={(e,index)=>e._id}
-data={searchedData.length > 0 ?searchedData:specificitems}
-renderItem={e=> <ListComponen uniteGetter={(e,d)=>uniteGetter(e,d)} id={e.item._id}  item={e.item.items}/> }/>
-
- </View>
-    </View>:<Text>قائمة المهام ستظهر هنا بعد اختيار المخزن</Text>}
-    </ScrollView>
-    </ScrollView>
+    </View>
+    // </ScrollView>
 )    
 }
 
