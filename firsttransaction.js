@@ -17,9 +17,9 @@ import {  Searchbar } from 'react-native-paper';
 export default function FirstTransaction(props){
   
   const toasterExistance= (e)=>{
-    console.log(e)
+    
     setExistense(e);
-    setExistense(e);
+    
   Toast.show({text1:e,type:"error"});
   // setFrom("")
   // setTo("")
@@ -49,7 +49,7 @@ setItem("")
 function clearProps(){
 setFrom("")
 setTo("")
-setExistense("")
+// setExistense("")
 setType("")
 setQuantity("")
 setItem("")
@@ -68,10 +68,11 @@ const [unit,setUnit]=useState([])
 const [quantity,setQuantity]=useState(0)
 const [destination ,setDestination ] =useState("")
 const [item,setItem]=useState("")
-const [notExist,setExistense]=useState(null)
+const [notExist,setExistense]=useState("")
 const [store,setStore]=useState(destination)
 const [factories,setFactories]=useState([])
 const receiptRef = useRef();
+
 const [fromList,setFromList]=useState([])
 const [storeNames,setStoreNames]=useState([])
 const [data,setData]=useState([])
@@ -90,6 +91,21 @@ const useNameStoreContext=useContext(storeNamesContext)
 const [word,setWord]=useState()
 const [searchedData,setSearchData]=useState([]);
 
+const uniteGetter=(n,s)=>{
+  try {
+          
+
+      setItem(s)
+      const mapper= specificitems.filter(e=>e._id == n );
+      setType(mapper[0].type)
+      setSearchQuery(mapper[0].items)
+      toasterExistance(`${mapper[0].store}  يتضمن ${mapper[0].quantity} ${mapper[0].type} من المهام المحددة`)
+      setSearchData([])
+    } catch(error) {
+      toasterExistance("المهام غير موجودة")
+    }
+    }
+    
 
 function receiptInputFocus() {
   return receiptRef.current.focusTextInput;
@@ -146,22 +162,7 @@ function openUnitRef() {
   function closeUnitRef() {
     pickUnitRef.current.blur();
   }
-  const uniteGetter=(n,s)=>{
-    
-    try {
-
-          
-      setItem(s)
-      const mapper= specificitems.filter(e=>e._id == n );
-      setType(mapper[0].type)
-      setSearchQuery(mapper[0].items)
-      setSearchData([])
-    toasterExistance(`${mapper[0].store}  يتضمن ${mapper[0].quantity} ${mapper[0].type} من المهام المحددة`)
-    } catch(error) {
-      toasterExistance("المهام غير موجودة")
-    }
-    }
-    
+  
 const pickerRefDestination = useRef();
 
 function openDestinationRef() {
@@ -196,16 +197,18 @@ console.log(details.admin)
     const[searcher,setSearcher]=useState(null)
     const [querySource,setQuerySource]=useState("")
     const [filteredData,setFilteredData]=useState([])
-
+console.log(item)
  const getSpecificData =  (e)   =>{
   
   try {
   
-    setSearchData([])
+    // setSearchData("")
+      setDestination(e)
+    // setFrom(e)        
 const mapper = data.filter(s=>s.store === e)
 setToGetSpecificITems(mapper)
-setDestination(e)
 
+setSearchQuery("")
   } catch (error) {
     console.log(error)
   }
@@ -228,13 +231,7 @@ return(
 <TextInput  autoFocus placeholder="التاريخ"  keyboardType="default" style={{ opacity:1 ,right:"auto",height:50 , opacity:1,borderRadius:6,backgroundColor:"#fff8f5"}}  
    value={date} onChange={e=>setDate(e.persist())}/>
 <View style={{zindex:+6}}> 
-{/* <DatePicker
-// containerStyle={{zIndex:20}}/
-inputStyle={{alignItems:"center",zIndex:1}}
-        date={date}
-        onChange={(date) => setDate(date)}
-        
-      /> */}
+
 </View>
 <Picker style={{marginTop:3,opacity:1} }
   onBlur={closeRefPicker}
@@ -255,7 +252,8 @@ inputStyle={{alignItems:"center",zIndex:1}}
   ref={pickerRefDestination}
   selectedValue={destination}
   onValueChange={(itemValue, itemIndex) =>
-  {setDestination(itemValue)
+  {
+    // setDestination(itemValue)
     getSpecificData(itemValue)}
 } 
    >
@@ -275,7 +273,7 @@ inputStyle={{alignItems:"center",zIndex:1}}
 onClearIconPress={()=>{setItem("")
  setType("")
  setSearchData([])}}
-style={{height: 50, marginBottom:3,opacity:.4,borderRadius:2,backgroundColor:"white"}}
+style={{height: 50, marginBottom:3,opacity:item ? 4 : .4,borderRadius:2,backgroundColor:"white"}}
       placeholder="اكتب اسم المهام وانتظر الاقتراحات"
       onChangeText={(query)=>Search(query)}
       value={searchQuery}
@@ -290,7 +288,7 @@ style={{height: 50, marginBottom:3,opacity:.4,borderRadius:2,backgroundColor:"wh
   // horizontal={true}
   initialNumToRender={10}
   
-   style={{ backgroundColor:"white",zIndex:10,elevation:50}} 
+   style={{ backgroundColor:"white",paddingTop:2,zIndex:10,elevation:50}} 
 keyExtractor={(e,index)=>e._id}
 data={searchedData.length > 0 ?searchedData:[]}
 renderItem={e=> <ListComponen uniteGetter={(e,d)=>uniteGetter(e,d)} setSpecificItem={setToGetSpecificITems} id={e.item._id}  key={e.item._id} item={e.item.items}/> }/>
@@ -298,58 +296,15 @@ renderItem={e=> <ListComponen uniteGetter={(e,d)=>uniteGetter(e,d)} setSpecificI
  </View>
 
 <View style={{alignSelf:"center"}}>
-{item?<Text style={{height:50 , opacity:1,borderRadius:6,backgroundColor:"#ffffff"}}>{item}</Text>:null}
+{/* {item?<Text style={{height:50 , opacity:1,borderRadius:6,backgroundColor:"#ffffff"}}>{item}</Text>:null} */}
 {type?<Text style={{height:50 , opacity:1,borderRadius:6,backgroundColor:"#ffffff"}}>{type}</Text>:null}
 </View>
-{/* <Picker
-// onFocus={openUnitRef}
-
-
-// onBlur={closeUnitRef}
-ref={pickUnitRef}
-selectedValue={item}
-onValueChange={(itemValue, itemIndex) =>
-  
-  getSpecificUnite(itemValue)
-}  >
-<Picker.Item label=" اختر من القائمة المهام المطلوبة"  enabled={false} key={1}  />
-{specificitems.map(e=><Picker.Item label={e.items} key={e._id} value={e.items}/>)}
-
-
-</Picker>
-
-<View>
-<Picker
-// onFocus={openUnitRef}
-// onBlur={closeUnitRef}
-// ref={pickUnitRef}
-selectedValue={type}
-onValueChange={(itemValue, itemIndex) =>
-    
-    setType(itemValue)
-
-}  
-
-
-><Picker.Item label=" اختر من القائمة الوحدة المناسبة"  enabled={false} key={1}  />
-
-{specificUnite ?<Picker.Item label={specificUnite.type} key={specificUnite._id} value={specificUnite.type}/>:<Text></Text>}
-
-
-
-
-
-
-</Picker>
- */}
-
-{/* </View> */}
 
 
 <TextInput placeholder="ادخل الكمية  "  style={{height:50 , opacity:1,borderRadius:6,backgroundColor:"#fff8f5"}} keyboardType="numeric" onChangeText={e=>setQuantity(e)} value={quantity}/>
 { notExist ? <Toast 
         position='top'
-        topOffset={4} onHide={()=> clearProps()}
+        topOffset={4} 
 
       />:null}
     { done ? <Toast 
