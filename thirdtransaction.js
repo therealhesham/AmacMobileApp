@@ -219,7 +219,9 @@ onClearIconPress={()=>{
       value={searchQuery}
     />
 
-:<Text>اختيار المخزن لاظهار قائمة المهام تلقائيا</Text>}
+:
+<Text>اختيار المخزن لاظهار قائمة المهام تلقائيا</Text>}
+
 
 <View >
   <FlatList
