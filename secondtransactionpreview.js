@@ -17,7 +17,7 @@ const user=useContext(Datacontext)
 const getter = async()=>{
 // axios.get
 // const fff =await Network.getIpAddressAsync()
-await fetch(`${process.env.REACT_APP_BASE_URL}/getsecondtransactions`,{method:"get"}).then(e=>e.json()).then(e=>setData(e))
+await fetch(`https://reactnativebackend.onrender.com/getsecondtransactions`,{method:"get"}).then(e=>e.json()).then(e=>setData(e))
 }
 
 

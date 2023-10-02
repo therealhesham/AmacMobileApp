@@ -117,7 +117,7 @@ Toast.show({
     text1: done
   })
 function alertComponent(){ 
-  Alert.alert("تنبيه","المهام غير موجودة باحد المخزنين ..  في حالة التأكد من وجودهما الفعلي .. قد يكون هذا الخطأ ناتج عن تسجيل نفس المهام باسماء مختلفة لذا راجع فريق الدعم الفني",[
+  Alert.alert("تنبيه","المهام غير موجودة باحد المخزنين ..  في حالة تأكدك من وجودهما الفعلي .. قد يكون هذا الخطأ ناتج عن تسجيل نفس المهام باسماء مختلفة لذا راجع فريق الدعم الفني",[
     {
       text: 'موافق',
       onPress: () => console.log('Ask me later pressed'),
@@ -136,7 +136,7 @@ if (!al  || !as) return alertComponent();
       const mapper= specificitems.filter(e=>e._id == n );
       setType(mapper[0].type)
       setSearchQuery(mapper[0].items)
-      // toasterExistance(`${mapper[0].store}  يتضمن ${mapper[0].quantity} ${mapper[0].type} من المهام المحددة`)
+      
       setSearchData([])
     } catch(error) {
       toasterExistance("المهام غير موجودة")

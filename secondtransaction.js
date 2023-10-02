@@ -60,7 +60,7 @@ const postHandler =async(e)=>{
         if (!details.isAdmin) return toasterExistance("only Admins can change and add new data")  
         if (!from ||  !type || !typeOfImporter || !lOcation ||date  ||!quantity || !items|| !receipt  ) return toasterExistance("رجاء ملىء البيانات")
         
-        await axios.post(`${process.env.REACT_APP_BASE_URL}/secondtransaction`,{store:from,typeOfImporter:typeOfImporter,
+        await axios.post(`https://reactnativebackend.onrender.com/secondtransaction`,{store:from,typeOfImporter:typeOfImporter,
             contractor:contractor,typeOfContracting:typeOfContracting,
             items:items,location:lOcation,date:date,quantity:quantity,receiptno:receipt,unit:type}).then(e=>
                e.data == "error" ? toasterExistance("خطأ في التسجيل ... المهام غير متاحة بالمخزن") : toasterDone("تم تسجيل البيانات بنجاح")
