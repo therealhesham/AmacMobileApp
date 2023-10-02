@@ -5,13 +5,14 @@ import axios from "axios";
 import jwtDecode from "jwt-decode";
 import { useContext, useEffect, useState } from "react";
 
-import { Button, FlatList, KeyboardAvoidingView, SafeAreaView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Button, FlatList, KeyboardAvoidingView, Modal, SafeAreaView, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from 'react-native-toast-message'
 import ListComponen from "./firsttransactionmemo";
 import {  Searchbar } from 'react-native-paper'
 import { ScrollView } from "react-native";
+import { Alert } from "react-native";
 
 
 
@@ -30,6 +31,7 @@ const [receipt,setReceipt]=useState("");
 const [specificUnite,setSpecificUnite]=useState();
 const [done,setDone]=useState("");
 const [storeList,setToStoreList]=useState([]);
+const [searchQuery, setSearchQuery] = useState("");
 const [data,setData]=useState([]);
 const [storeaNames,setStoreNames]=useState([])
 const [searchedData,setSearchData]=useState([]);
@@ -72,14 +74,25 @@ if (from === to )   return toasterExistance("غير المخزن المحول م
     toasterExistance("Authentication or Internet Error ")
     }  
 }
+const getSpecificData = async (e)   =>{
+  
+  try {
+    setSearchData("")
+      //   setDestination(e)
+      setTo(e)        
+      
+const mapper = data.filter(s=>s.store === e)
 
-const getSpecificData =  (e)   =>{
-  setSearchData("")  
-  setFrom(e)        
-    const mapper = data.filter(s=>s.store === e)
-    setToGetSpecificITems(mapper)
-   
- }
+
+
+setToGetSpecificITems(mapper)
+
+setSearchQuery("")
+
+  } catch (error) {
+    console.log("error")
+  }
+}
  function Clear (){
     setDone("تم تسجيل البيانات بنجاح") 
     setFrom("")
@@ -103,20 +116,39 @@ Toast.show({
     type: 'info',
     text1: done
   })
-  const uniteGetter=(n,s)=>{
-    try {
+function alertComponent(){ 
+  Alert.alert("تنبيه","المهام غير موجودة باحد المخزنين ..  في حالة التأكد من وجودهما الفعلي .. قد يكون هذا الخطأ ناتج عن تسجيل نفس المهام باسماء مختلفة لذا راجع فريق الدعم الفني",[
+    {
+      text: 'موافق',
+      onPress: () => console.log('Ask me later pressed'),
+    }])}
+      
+const uniteGetter=(n,s)=>{
+  try {
+
+
+const datafirst = data.filter(e=> e.store == from).filter(e=> e.items == s);
+const dataSecond = data.filter(e=> e.store == to).filter(e=> e.items == s);
+const al = datafirst.length;
+const as = dataSecond.length;
+if (!al  || !as) return alertComponent();
       setItems(s)
       const mapper= specificitems.filter(e=>e._id == n );
       setType(mapper[0].type)
-       
-    } catch (error) {
+      setSearchQuery(mapper[0].items)
+      // toasterExistance(`${mapper[0].store}  يتضمن ${mapper[0].quantity} ${mapper[0].type} من المهام المحددة`)
+      setSearchData([])
+    } catch(error) {
       toasterExistance("المهام غير موجودة")
     }
     }
+    
+
+
     const Search = (E)=>{
     
     
-    
+    setSearchQuery(E)
         const mapper = specificitems.filter(e=>e.items.includes(E))
     
         setSearchData(mapper)
@@ -124,30 +156,28 @@ Toast.show({
     
     // specificitems.length=10
 return (
-    <ScrollView horizontal={false} style={{flex: 1}}> 
-    <ScrollView behavior="position" style={{backgroundColor:"#ffffff",padding:30}}>
+    // <ScrollView horizontal={false} style={{flex: 1}}> 
+    <View style={{backgroundColor:"#ffffff",padding:30,flex:1}}>
 
 <TextInput placeholder="رقم الاذن" keyboardType="numeric" value={receipt}  onChangeText={e=>setReceipt(e)}/>
 
 
 <TextInput  autoFocus placeholder="التاريخ"  keyboardType="default" style={{ opacity:1 ,right:"auto",height:50 , opacity:1,borderRadius:6,backgroundColor:"#fff8f5"}}  
-   value={date} onChange={e=>setDate(e.persist())}/>
+   value={date} onChange={e=>setDate(e)}/>
 <Picker selectedValue={from}
 
 onValueChange={(value)=>{
     
     setFrom(value)
-    getSpecificData(value)
-    
     
 }}
 
 
 >
 <Picker.Item value="من مخزن" enabled={false} label="من مخزن" key={1}/>
-{/* <Picker.Item> */}
+
 {storeaNames.map(e=> <Picker.Item value={e.name} label={e.name} key={e._id}/>)  }
-{/* </Picker.Item> */}
+
 
 
 
@@ -158,7 +188,9 @@ onValueChange={(value)=>{
 
 onValueChange={(value)=>{
 setTo(value)
-
+getSpecificData(value)
+    
+    
 }}
 
 >
@@ -172,15 +204,48 @@ setTo(value)
 </Picker>
 
 
+{to && from?<Searchbar
+
+onClearIconPress={()=>{
+      setItems("");
+      
+      setType("");
+      
+      setSearchData([]);
+    }}
+      style={{height: 50, marginBottom:3,opacity:items ? 4 : .4,borderRadius:2,backgroundColor:"white"}}
+      placeholder="اكتب اسم المهام وانتظر الاقتراحات"
+      onChangeText={(query)=>Search(query)}
+      value={searchQuery}
+    />
+
+:
+<Text>اختيار المخزن لاظهار قائمة المهام تلقائيا</Text>}
+
+
+<View >
+  <FlatList
+          // scrollEnabled={true}
+  // horizontal={true}
+  initialNumToRender={10}
+  
+   style={{ backgroundColor:"white",paddingTop:2,zIndex:10,elevation:50}} 
+keyExtractor={(e,index)=>e._id}
+data={searchedData.length > 0 ?searchedData:[]}
+renderItem={e=> <ListComponen uniteGetter={(e,d)=>uniteGetter(e,d)} setSpecificItem={setToGetSpecificITems} id={e.item._id}  key={e.item._id} item={e.item.items}/> }/>
+
+ </View>
+
+
 <View style={{width:300,alignSelf:"center"}}>
 {items?<Text style={{height:50, opacity:1,borderRadius:6,backgroundColor:"#fff8f5"}}>{items}</Text>:null}
 {type?<Text style={{height:50 , opacity:1,borderRadius:6,backgroundColor:"#fff8f5"}}>{type}</Text>:null}
 </View>
 
 <TextInput placeholder="الكمية" keyboardType="numeric"  value={quantity} onChangeText={(e)=>setQuantity(e)}/>
-{/* <TouchableOpacity style={{width:300,flexDirection:"row",justifyContent:"center",alignItems:"center" }}> */}
+
     <TouchableOpacity style={{paddingTop:20}}><Button color="#D71313" title="تسجيل البيانات"   onPress={postHandler}/></TouchableOpacity>
-    {/* </TouchableOpacity> */}
+
     
 { notExist ? <Toast onPress={()=>Toast.hide()}
         position='top'
@@ -192,38 +257,9 @@ setTo(value)
         topOffset={3}
       />:null} 
 
-   
-{specificitems.length >0?
-    <View
+</View>
 
-
->
-<Searchbar
-focusable={false}
-style={{height:50, marginBottom:3,opacity:.9}}
-      placeholder="البحث عن المهام من هنا"
-      onChangeText={(query)=>Search(query)}
  
-    />
-
-
-<View >
-  <FlatList
-         scrollEnabled={false} 
-// initialNumToRende={10}
-//   maxToRenderPerBatch={10}
-  initialNumToRender={2}
-  
-   style={{height:200 }} 
-keyExtractor={(e,index)=>e._id}
-data={searchedData.length > 0 ?searchedData:specificitems}
-renderItem={e=> <ListComponen uniteGetter={(e,d)=>uniteGetter(e,d)} id={e.item._id} key={e.item._id} item={e.item.items}/> }/>
-
- </View>
-    </ View>:<Text>قائمة المهام ستظهر هنا بعد اختيار المخزن</Text>}
-</ScrollView>
-
-    </ScrollView>
 
 )
 
