@@ -19,11 +19,14 @@
       "bundleIdentifier": "com.heshamahmedbadr.amacmobileapp"
     },
     "android": {
+      
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.heshamahmedbadr.amacmobileapp"
+      
+      "package": "com.heshamahmedbadr.amacmobileapp",
+      "versioncode":2
     },
     "web": {
       "favicon": "./assets/favicon.png"

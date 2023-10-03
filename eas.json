@@ -1,6 +1,9 @@
 {
   "build": {
-    "preview": {"env":{
+    "preview":
+    
+    {
+      "env":{
 "REACT_APP_BASE_URL":"https://reactnativebackend.onrender.com"
 
     },
