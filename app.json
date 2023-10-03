@@ -2,6 +2,7 @@
   "expo": {
     "name": "Amac Stores",
     "slug": "amacmobileapp",
+
     "version": "2.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -25,8 +26,7 @@
         "backgroundColor": "#ffffff"
       },
       
-      "package": "com.heshamahmedbadr.amacmobileapp",
-      "versioncode":2
+      "package": "com.heshamahmedbadr.amacmobileapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"

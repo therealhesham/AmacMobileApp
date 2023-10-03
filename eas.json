@@ -1,14 +1,13 @@
 {
+  "cli": {
+    "appVersionSource": "remote"
+  },
   "build": {
-    "preview":
-    
-    {
-      "env":{
-"REACT_APP_BASE_URL":"https://reactnativebackend.onrender.com"
-
-    },
+    "preview": {
+      "env": {
+        "REACT_APP_BASE_URL": "https://reactnativebackend.onrender.com"
+      },
       "android": {
-        
         "buildType": "app-bundle"
       }
     },
@@ -20,8 +19,11 @@
     "preview3": {
       "developmentClient": true
     },
-    "production": {"node": "16.13.0","env": {
-      "REACT_APP_BASE_URL":"https://reactnativebackend.onrender.com"
-    }}
+    "production": {
+      "node": "16.13.0",
+      "env": {
+        "REACT_APP_BASE_URL": "https://reactnativebackend.onrender.com"
+      }
+    }
   }
 }
