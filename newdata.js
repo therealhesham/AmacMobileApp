@@ -46,7 +46,7 @@ then(e=>e.data == "success" ? clear() :setError("يرجى مراعاة ادخا�
 
 return(
 
-<View style={{paddingTop:Dimensions.get("screen").height/6,backgroundColor:"#ffffff",padding:30}}> 
+<View style={{paddingTop:Dimensions.get("screen").height/6,backgroundColor:"#ffffff",flex:1,padding:30}} > 
     
 <Text style={{fontSize:19,textAlign:"center",color:"red"}}>تسجيل بيانات الجرد</Text>
 <TextInput cursorColor="#D71313" focusable style={{paddingBottom:20}}  placeholder="المخزن" value={store} onChangeText={(e)=>setStore(e)}/>

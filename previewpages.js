@@ -14,9 +14,16 @@ import { StatusBar } from "expo-status-bar";
 import ExpoStatusBar from "expo-status-bar/build/ExpoStatusBar";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import auth from "./context";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
+import XLSX from 'xlsx';
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
+import PreviewStores from "./previewstores";
+import { Icon } from "@rneui/themed";
 
 function Pages (props){
+
+
     const auths = useContext(auth)        
 async function Signout() {
 
@@ -24,13 +31,13 @@ async function Signout() {
 auths.logs.setLogger("")
 }
 return(
-<SafeAreaView style={{flex:1,flexDirection:"column" }}>
+<SafeAreaView style={{flex:1,flexDirection:"column" ,backgroundColor:"#ffffff"}}>
 <View style={container.container}>
 <TouchableOpacity onPress={()=>props.navigation.navigate('Preview')} >
 <View style={container.View}>
 <LinearGradient colors={["#C06C84", "#6C5B7B", "#355C7D"]} style={{height:150,borderRadius:10}}>
 <Text style={{padding:40}}>
-    المتاح 
+     جرد المخازن 
 </Text>
 </LinearGradient>
 </View>
@@ -73,14 +80,20 @@ return(
 </LinearGradient>
 </View>
 </TouchableOpacity>
+<TouchableOpacity onPress={()=>props.navigation.navigate('PreviewStores')} >
+<View style={container.View} >
+<LinearGradient colors={['#3d7eaa','#ffe47a']} style={{height:150,borderRadius:10}}>
+<Text style={{padding:40}} allowFontScaling={false}>
+     مشاركة الجرد كملف اكسيل
+</Text>
+</LinearGradient>
+</View>
+</TouchableOpacity>
+
 
 </View>
+<Icon name="logout" onPress={Signout} style={{alignSelf:"center"}}></Icon>
 
-<View style={{paddingBottom:30,width:200,alignSelf:"center"}}>
-<Button title="تسجيل الخروج"  onPress={Signout}/>
-
-</View>
-    
 
 </SafeAreaView>
 )
@@ -97,7 +110,7 @@ const PreviewPages = () => {
     <NavigationContainer independent={true}  >
 <Stack.Navigator initialRouteName="Pages"  >
 
-<Stack.Screen name="Pages" component={Pages}  options={{title:"حركات المخازن "}} />
+<Stack.Screen name="Pages" component={Pages}  options={{title: "تصفح المخازن"}} />
 {/* <Stack.Screen name="App" component={App} /> */}
 <Stack.Screen name="Preview" component={Preview} options={{title:" جرد المخازن"}} />
 <Stack.Screen name="PreviewSecond" component={PreviewSecond} options={{title:"المنصرف"}}/>
@@ -105,6 +118,7 @@ const PreviewPages = () => {
 <Stack.Screen name="PreviewFirst" component={PreviewFirst} options={{title:"الــوارد"}}/>
 <Stack.Screen name="PreviewThird" component={PreviewThird} options={{title:"التحويل"}}/>
 <Stack.Screen name="PreviewFourth" component={PreviewFourth} options={{title:"المرتجع"}}/>
+<Stack.Screen name="PreviewStores"  component={PreviewStores} options={{title:"مشاركة جرد المخازن"}}/>
 </Stack.Navigator>
 
 

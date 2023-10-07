@@ -1,6 +1,6 @@
-import { memo, useContext, useEffect, useMemo, useState } from "react";
+import React, { memo, useContext, useEffect, useMemo, useState } from "react";
 import DatePicker from "expo-datepicker";
-// import Autocomplete from "react-native-autocomplete-input";
+
 import axios from "axios";
 import ListComponen from './firsttransactionmemo';
 import DateTimePicker ,{DateTimePickerAndroid} from '@react-native-community/datetimepicker';
@@ -8,11 +8,17 @@ import jwtDecode from "jwt-decode";
 import { useRef } from "react";
 import { Alert, Button, KeyboardAvoidingView,ImageBackground,Text, TextInput, View,FlatList, Pressable, TouchableOpacity, Modal, ScrollView } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import AutocompleteInput from "react-native-autocomplete-input";
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Datacontext, storeNamesContext } from "./datacontext";
 import Toast from 'react-native-toast-message';
 import {  Searchbar } from 'react-native-paper';
+import { Platform } from "react-native";
+import * as ImagePicker from 'expo-image-picker';
+import { Image } from "react-native";
+
+import { Icon } from "@rneui/themed";
+import RNDateTimePicker from "@react-native-community/datetimepicker";
 
 export default function FirstTransaction(props){
   
@@ -82,14 +88,73 @@ const [receipt,setReceipt]=useState(0)
 const [specificitems,setToGetSpecificITems]=useState([])
 const [timestamp ,settimeStamp]=useState(1616608200000)
 // const [date, setDate] = useState(new Date().toString());
-const [date, setDate] = useState("");
+const ss=new Date()
+const [date, setDate] = useState(ss);
 const [specificUnite,setSpecificUnite]=useState({})
 const usecontext = useContext(Datacontext)
 const useNameStoreContext=useContext(storeNamesContext)
-
-
+const [Link,setLink]=useState("");
+const[searcher,setSearcher]=useState(null)
+const [querySource,setQuerySource]=useState("")
+const [filteredData,setFilteredData]=useState([])
 const [word,setWord]=useState()
+// const [image,setImage]=
+const [photo, setPhoto] = React.useState(null);
 const [searchedData,setSearchData]=useState([]);
+const [mode, setMode] = useState('date');
+ const [show, setShow] = useState(false);
+ 
+const createFormData = (photo) => {
+  const data = new FormData();
+  data.append("file", {uri:photo,type:"test/jpg",name:"amacphoto"});
+  data.append(
+    "upload_preset",
+    "z8q1vykv"
+  );
+  data.append("cloud_name","duo8svqci");
+  data.append("folder", "samples");
+  
+  
+  
+
+  return data
+};
+
+
+const handleChoosePhoto = async () => {
+  let result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ImagePicker.MediaTypeOptions.All,
+    // allowsEditing: true,
+    aspect: [4, 3],
+    quality: 1,
+  });
+
+  
+
+  if (!result.canceled) {
+    
+    await fetch(`https://api.cloudinary.com/v1_1/duo8svqci/image/upload`, {
+      method: 'POST',
+      body: createFormData(result.assets[0].uri),
+    })
+      .then((response) => response.json())
+      .then((response) => {
+        setLink(response.url);
+        toasterExistance("تم رفع صورة الاذن الى قاعدة البيانات")
+      })
+      .catch((error) => {
+        console.log('error', error);
+      });
+  };
+
+
+
+  }
+  
+
+const handleUploadPhoto = async () => {
+  
+};
 
 const uniteGetter=(n,s)=>{
   try {
@@ -181,10 +246,10 @@ const postHandler =async(e)=>{
     const find = await AsyncStorage.getItem("authToken")
     const details = jwtDecode(find)
     if (!details.isAdmin) return toasterExistance("only Admins can change and add new data")
-console.log(details.admin)
-    if (!from ||  !type || !quantity || !destination || !item || !receipt ) return toasterExistance("رجاء التأكد من ملىء جميع البيانات المطلوبة");
+
+    if (!from || !date || !type || !quantity || !destination || !item || !receipt ) return toasterExistance("رجاء التأكد من ملىء جميع البيانات المطلوبة");
     await axios.post(`${process.env.REACT_APP_BASE_URL}/transactionexport`,
-    {source:from,destination:destination,unit:type,quantity:quantity,date:date,items:item,receiptno:receipt,user:details.uername}).
+    {source:from,destination:destination,file:Link,unit:type,quantity:quantity,date:date,items:item,receiptno:receipt,user:details.uername}).
     then(e=>{
         e.data == "error" ? toasterExistance("خطأ في تسجيل البيانات .. المهام غير متاحة بالمخزن او قد تكون اخترت وحدة غير مناسبة لقائمة الجرد..من فضلك الرجوع لقائمة الجرد من هنا ") : toasterDone("تم تسجيل البيانات بنجاح")})
       
@@ -194,10 +259,8 @@ console.log(details.admin)
 
     
     }
-    const[searcher,setSearcher]=useState(null)
-    const [querySource,setQuerySource]=useState("")
-    const [filteredData,setFilteredData]=useState([])
-console.log(item)
+    
+
  const getSpecificData =  (e)   =>{
   
   try {
@@ -210,29 +273,53 @@ setToGetSpecificITems(mapper)
 
 setSearchQuery("")
   } catch (error) {
-    console.log(error)
+    toasterExistance("خطأ في تنزيل البيانات")
   }
   
     
  }
-
-
  
+ const setDsate = (event, e) => {
+  
+  if(event.type == "set") {
+    
+    setDate(e)
+    //ok button clicked
+    setShow(false)
+    // DateTimePickerAndroid.dismiss({mode: AndroidNativeProps['mode']})
+} else {
+    //cancel button clicked
+}
+ 
+};
+
+
+const d =new Date()
 return(
 
   
   // <ScrollView horizontal={false} style={{flex: 1}}>
-<View  style={{padding:30 ,backgroundColor:"#ffffff",flex:1}}>
+<View  style={{padding:14 ,backgroundColor:"#ffffff",flex:1}}>
 
 
 <TextInput ref={receiptRef}  autoFocus    style={{ opacity:1 ,right:"auto",height:50 , opacity:1,borderRadius:6,backgroundColor:"#fff8f5"}}
-  placeholder="رقم الاذن" keyboardType="numeric"  value={receipt} onChange={e=>setReceipt(e)}/>
+  placeholder="رقم الاذن"   value={receipt} onChangeText={e=>setReceipt(e)}/>
+<Text style={{alignSelf:"flex-start",color:"black"}} >
+{show &&<RNDateTimePicker  mode={mode} onChange={
+  
+  (e,s)=>{
+    
+    setShow(false)
+  setDsate(e,s)}} value={date} /> }
+<Icon name="calendar-today" color="grey" onPress={()=>setShow(true)} />
+{date?<Text>{date.toLocaleDateString()}</Text>:""}
+</Text>
 
-<TextInput  autoFocus placeholder="التاريخ"  keyboardType="default" style={{ opacity:1 ,right:"auto",height:50 , opacity:1,borderRadius:6,backgroundColor:"#fff8f5"}}  
-   value={date} onChange={e=>setDate(e.persist())}/>
-<View style={{zindex:+6}}> 
 
-</View>
+{/* !dat
+<TextInput  autoFocus placeholder="التاريخ"  value={date} keyboardType="default" style={{ opacity:1 ,right:"auto",height:50 , opacity:1,borderRadius:6,backgroundColor:"#fff8f5"}}  
+    onChangeText={e=>setDate(e)}/> */}
+
 <Picker style={{marginTop:3,opacity:1} }
   onBlur={closeRefPicker}
   
@@ -314,11 +401,31 @@ renderItem={e=> <ListComponen uniteGetter={(e,d)=>uniteGetter(e,d)} setSpecificI
 
       /> :null} 
 
-<Button color="red" title="تسجيل البيانات" onPress={postHandler} /> 
 
+
+{Link.length >0 ?<View style={{flexDirection:"row",justifyContent:"space-around",alignItems:"baseline"}}> 
+
+<Text>حذف الصورة في حالة اردت التغيير او التراجع</Text>
+<Icon name= "delete" reverse={true}  onPress={()=>{setLink("")
+toasterExistance("تم حذف الصورة")
+}}/>
+</View> :<View style={{flexDirection:"row",justifyContent:"space-around",alignItems:"baseline"}}> 
+{/* <Text>اختار صورة الاذن</Text> */}
+      <Text>اختار من تلك الايقونة صورة الاذن</Text>
+      <Icon name= "image" reverse={true}  onPress={handleChoosePhoto}/>
+      </View> }
+      <Button color="red" title="تسجيل البيانات" onPress={postHandler} /> 
+{
+Link &&
+      <Image
+            source={{ uri: Link&&Link }}
+            style={{ width: 200, height: 150 }}
+          />
+
+}
 
     </View>
-    // </ScrollView>
+
 )    
 }
 

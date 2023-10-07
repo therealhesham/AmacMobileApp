@@ -1,28 +1,37 @@
 import * as Network from 'expo-network';
 import { StarOutlined, StarFilled, MailOutlined } from '@ant-design/icons';
-
+import print from 'print-js'
 import { create } from "apisauce";
 import axios, { Axios } from "axios";
-import { useContext, useEffect, useState } from "react";
-import { Dimensions, FlatList, Pressable, SafeAreaView, Text, TouchableOpacity, View, useWindowDimensions } from "react-native";
+import { useCallback, useContext, useEffect, useState } from "react";
+import { Alert, Dimensions, FlatList, Image, Linking, Modal, Pressable, SafeAreaView, Text, TouchableOpacity, View, useWindowDimensions } from "react-native";
 import { Datacontext } from './datacontext';
 import { Searchbar } from 'react-native-paper';
-
+import printJS from 'print-js';
+import { Share } from 'react-native';
+import { Icon } from '@rneui/themed';
+// import Share from 'react-native-share';
 
 
 const PreviewFirst = () => {
-    const ssssss =process.env.REACT_APP_BASE_URL
-const user=useContext(Datacontext)
-    const [data,setData]=useState([])
+  const [data,setData]=useState([])
+    const [itemsData,setItemData]=useState(100)
+    const [searchQuery, setSearchQuery] = useState(null);
+    const [filteredData,setFilter]=useState([])
+    const [refreshing,setRefresh]=useState(false)
+    const [modalVisible, setModalVisible] = useState(false);
+    const [showImage,setShowImage]=useState(false)
+    const [ toImage,setToImage]=useState("")  
+    
+    
 // create("")
+
 const getter = async()=>{
 // axios.get
 // const fff =await Network.getIpAddressAsync()
-await fetch(`https://reactnativebackend.onrender.com/firsttansactionlist`,{method:"get"}).then(e=>e.json()).then(e=>setData(e))
+await fetch(`https://reactnativebackend.onrender.com/firsttansactionlist`,{method:"get"}).then(e=>e.json()).then(e=>setData(e.reverse()))
+
 }
-
-
-console.log(process.env.REACT_APP_BASE_URL)
 
 
 
@@ -33,57 +42,106 @@ console.log(process.env.REACT_APP_BASE_URL)
         
      },[])
 
-const [itemsData,setItemData]=useState(100)
-const [searchQuery, setSearchQuery] = useState('');
-const [filteredData,setFilter]=useState([])
-function filter(e){
 
-    setSearchQuery(e)
-  
-  const datas =data.filter(e=>e.items.includes(searchQuery))
-  setFilter(datas)
-        
+     const isOrientation = Dimensions.get('window').width > Dimensions.get('window').height
+
+
+console.log(isOrientation)
+     function filter(s){
+
+//     setSearchQuery(s)
+//   console.log(s)
+        // console.log(searchQuery.length)
   }     
+  const onShare = async (receiptno,items,quantity,unit,source,destination ,url) => {
+    try {
+      const result = await Share.share({
+        title:" تفاصيل",
+        message:
+        `اذن رقم ${receiptno} بالمهام ${items} من  ${source} الى ${destination}  بال${unit} ${quantity} ...... الرابط من هنا ${url}`
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+          console.log(result)
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+        console.log(result)
+      }
+    } catch (error) {
+      Alert.alert(error.message);
+    }
+  };
+const ssss = useCallback((id)=>{
 
- const ItemComponents= ({items,destination,unit,receiptno,quantity,source}) =>{
+  setToImage(id)
+  setShowImage(true)},[id=toImage])
+
+  
+  // console.log()
+ const ItemComponents= ({id,items,date,file,destination,unit,receiptno,quantity,source}) =>{
 return(
-<TouchableOpacity >
 
- <View
-style={{ paddingLeft:12,paddingRight:12, borderBottomWidth:4,borderRadius:30 , height:150,marginBottom:20 }} >
 
-<Text>رقم الاذن    {receiptno}</Text>
-<Text>المهام     {items}</Text>
-<Text>الكمية     {quantity}</Text>
-<Text>الوحدة     {unit}</Text>
-<Text>المصدر     {source}</Text>
-<Text>المخزن     {destination}</Text>
+ <View  
+style={{ padding:12,alignContent:"center",alignItems:"inherit",backgroundColor:"#ffffff",borderRadius:30 , marginBottom:20 }} >
+<Text style={{flexDirection:"row" }} >
+<Text  >رقم الاذن   : {receiptno} </Text> <Icon name='share' color="black"  iconStyle={ {justifyContent:"flex-start",marginTop:0, marginRight:Dimensions.get("window").width/1.9}}  onPress={()=>onShare(receiptno,items,quantity,unit,source,destination,file )} /> </Text>
+<Text>تاريخ الاذن   : {date}</Text>
+<Text>المهام    : {items}</Text>
+<Text>الكمية    :  {quantity}</Text>
+<Text>الوحدة    : {unit}</Text>
+<Text>المصدر    : {source}</Text>
+<Text>المخزن    : {destination}</Text>
+
+
+{file && <Icon iconStyle={{marginRight:Dimensions.get("screen").width-50,width:30}}  reverse={false} name="image"  onPress={()=>ssss(id)}/>}
+{showImage & toImage==id?
+
+    <Image   resize={true}   style={{width:file?Dimensions.get("screen").width-95:0,paddingBottom:1,height:file?200:0,alignSelf:'center'}} uri={file}
+  source={{
+    uri: file,
+  }}/>:""}
 
 {/* <View style={{height:5,borderRadius:13}}/> */}
 </View>
-</TouchableOpacity>
+
 )
 
 }
-const [refreshing,setRefresh]=useState(false)
 
-return (<SafeAreaView style={{width:Dimensions.get("screen")
+
+return (<SafeAreaView style={{ flex:1,width:Dimensions.get("screen")
 }}>
 
 <Searchbar
-style={{height:50,color:'white'}}
-      placeholder="بحث"
-      onChangeText={(query)=>filter(query)}
-      value={searchQuery}
+
+onClearIconPress={()=>setSearchQuery(null)}
+style={{height:50,color:'#ffffff'}}
+      placeholder=" بحث برقم الاذن"
+onChangeText={(query)=>{
+    
+    setSearchQuery(query)
+        const datas = data.filter(e=>e.receiptno.includes(parseInt(query)))
+        setFilter(datas)
+      
+}}
+value={searchQuery}
+      
     />
+
 {data.length>0 &&<FlatList
 refreshing={refreshing}
 
-data={searchQuery.length>0 && filteredData ?filteredData:data}
+// style={{flex:1}}
+data={ filteredData.length > 0 ?  filteredData : data}
 renderItem={e=> <ItemComponents  id={e.item._id} items={e.item.items} destination={e.item.destination}
 
-        
-    
+        date={e.item.date}
+    file={e.item.file}
     
     
 unit={e.item.unit}

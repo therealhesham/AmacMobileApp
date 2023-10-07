@@ -1,6 +1,6 @@
 import { Picker } from "@react-native-picker/picker";
 import { useContext,useEffect, useState } from "react";
-import { Button, FlatList, KeyboardAvoidingView, SafeAreaView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Button, Dimensions, FlatList,Image, KeyboardAvoidingView, SafeAreaView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { Datacontext, contractorsContext, storeNamesContext } from "./datacontext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import jwtDecode from "jwt-decode";
@@ -8,15 +8,20 @@ import jwtDecode from "jwt-decode";
 import {  Searchbar } from 'react-native-paper'
 import axios from "axios";
 import Toast from 'react-native-toast-message'
-
+import RNDateTimePicker from "@react-native-community/datetimepicker";
+import * as ImagePicker from 'expo-image-picker';
 import ListComponen from "./firsttransactionmemo";
 import { ScrollView } from "react-native";
+import { Icon } from "@rneui/themed";
 
 const  Secondtransaction= () => {
 // const storeNames = useContext(storeNamesContext)
 
 const [from,setFrom]=useState("")
-const [date,setDate]=useState("")
+const ss=new Date()
+const [date, setDate] = useState(ss);
+const [mode, setMode] = useState('date');
+
 const [typeOfImporter,setTypeOfImporter]=useState("")
 const [searchedData,setSearchData]=useState([]);
 const [searchQuery, setSearchQuery] = useState("");
@@ -26,7 +31,7 @@ const [data,setData]=useState([])
 const [quantity,setQuantity]=useState("")
 const [receipt,setReceipt]=useState("")
 const [items,setItems]=useState("")
-// const [specificitems,setToGetSpecificITems]=useState([])
+
 const [typeOfContracting,settypeOfContracting]=useState("")
 const [lOcation,setlOcation]=useState("")
 const [specificitems,setToGetSpecificITems]=useState([])
@@ -36,7 +41,8 @@ const [done,setDone]=useState(null)
 const [placesData,setPlacesData]=useState([])
 const [storeNames,setStoreNames]=useState([])
 const [contractorNames,setContractorNames]=useState([])
-
+const [show, setShow] = useState(false);
+const [Link,setLink]=useState(""); 
 
 const fetchStores = async()=>{
 
@@ -58,10 +64,10 @@ const postHandler =async(e)=>{
         const find = await AsyncStorage.getItem("authToken")
         const details = jwtDecode(find)
         if (!details.isAdmin) return toasterExistance("only Admins can change and add new data")  
-        if (!from ||  !type || !typeOfImporter || !lOcation ||date  ||!quantity || !items|| !receipt  ) return toasterExistance("رجاء ملىء البيانات")
+        if (!from ||  !type || !typeOfImporter || !lOcation || !date  ||!quantity || !items|| !receipt  ) return toasterExistance("رجاء ملىء البيانات")
         
         await axios.post(`https://reactnativebackend.onrender.com/secondtransaction`,{store:from,typeOfImporter:typeOfImporter,
-            contractor:contractor,typeOfContracting:typeOfContracting,
+            contractor:contractor,typeOfContracting:typeOfContracting,file:Link,
             items:items,location:lOcation,date:date,quantity:quantity,receiptno:receipt,unit:type}).then(e=>
                e.data == "error" ? toasterExistance("خطأ في التسجيل ... المهام غير متاحة بالمخزن") : toasterDone("تم تسجيل البيانات بنجاح")
                
@@ -121,7 +127,7 @@ setToGetSpecificITems(mapper)
           setType(mapper[0].type)
           setSearchQuery(mapper[0].items)
           setSearchData([])
-          toasterExistance(` ${mapper[0].store}  يتضمن ${mapper[0].quantity} ${mapper[0].type} من المهام المحددة`)      
+          toasterExistance(` ${mapper[0].store}  يتضمن ${parseFloat(mapper[0].quantity.toFixed(3))} ${mapper[0].type} من المهام المحددة`)      
         } catch(error) {
           toasterExistance("المهام غير موجودة")
         }
@@ -136,15 +142,86 @@ setToGetSpecificITems(mapper)
         setSearchData(mapper)
             }
     
+const createFormData = (photo) => {
+  const data = new FormData();
+  data.append("file", {uri:photo,type:"test/jpg",name:"amacphoto"});
+  data.append(
+    "upload_preset",
+    "z8q1vykv"
+  );
+  data.append("cloud_name","duo8svqci");
+  data.append("folder", "samples");
+  
+  
+  
+
+  return data
+};
+
+
+const handleChoosePhoto = async () => {
+  let result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ImagePicker.MediaTypeOptions.All,
+    // allowsEditing: true,
+    aspect: [4, 3],
+    quality: 1,
+  });
+
+  
+
+  if (!result.canceled) {
+    
+    await fetch(`https://api.cloudinary.com/v1_1/duo8svqci/image/upload`, {
+      method: 'POST',
+      body: createFormData(result.assets[0].uri),
+    })
+      .then((response) => response.json())
+      .then((response) => {
+        setLink(response.url);
+        toasterExistance("تم رفع صورة الاذن الى قاعدة البيانات")
+      })
+      .catch((error) => {
+        console.log('error', error);
+      });
+  };
+
+
+
+  }
+
+  const setDsate = (event, e) => {
+    
+    if(event.type == "set") {
+      
+      setDate(e)
+      //ok button clicked
+      setShow(false)
+      // DateTimePickerAndroid.dismiss({mode: AndroidNativeProps['mode']})
+  } else {
+      //cancel button clicked
+  }
+   
+  };
+  
+    
+
     
     return ( 
       // <ScrollView horizontal={false} style={{flex: 1}}> 
-    <View style={{backgroundColor:"#ffffff",padding:30}}>
+    <SafeAreaView style={{backgroundColor:"#ffffff",flex:1,padding:10}}>
 
-<TextInput  keyboardType="numeric" value={receipt} placeholder="رقم الاذن" style={{backgroundColor:"#fff8f5",height:60,borderRadius:10}} onChangeText={e=>setReceipt(e)}/>
+<TextInput  keyboardType="numeric" value={receipt} placeholder="رقم الاذن" style={{backgroundColor:"#fff8f5",height:40,borderRadius:10}} onChangeText={e=>setReceipt(e)}/>
+<Text style={{alignSelf:"flex-start",color:"black",alignItems:"baseline"}} >
+{show &&<RNDateTimePicker mode={mode} onChange={
+  
+  (e,s)=>{ 
+    
+    setShow(false)
+  setDsate(e,s)}} value={date} /> }
+<Icon name="calendar-today" style={{paddingTop:2}} onPress={()=>setShow(true)} />
+{date?<Text>{date.toLocaleDateString()}</Text>:""}
+</Text>
 
-<TextInput  autoFocus placeholder="التاريخ"  keyboardType="default" style={{ opacity:1 ,right:"auto",height:50 , opacity:1,borderRadius:6,backgroundColor:"#fff8f5"}}  
-   value={date} onChange={e=>setDate(e.persist())}/>
 <Picker
  
   
@@ -194,9 +271,9 @@ renderItem={e=> <ListComponen uniteGetter={(e,d)=>uniteGetter(e,d)} setSpecificI
 
 
 
- <View style={{width:300,alignSelf:"center"}}>
-{items?<Text style={{height:50, opacity:1,borderRadius:6,backgroundColor:"#fff8f5"}}>{items}</Text>:null}
-{type?<Text style={{height:50 , opacity:1,borderRadius:6,backgroundColor:"#fff8f5"}}>{type}</Text>:null}
+ <View style={{width:Dimensions.get("window").width/1.2,alignSelf:"center"}}>
+{items?<Text style={{ opacity:1,borderRadius:6,backgroundColor:"#fff8f5"}}>{items}</Text>:null}
+{type?<Text style={{ opacity:1,borderRadius:6,backgroundColor:"#fff8f5"}}>{type}</Text>:null}
 </View>
 
 
@@ -242,6 +319,7 @@ selectedValue={typeOfContracting}
 label="خصم / تشغيل"
 onValueChange={(e)=>settypeOfContracting(e)}
 >
+<Picker.Item label="اختار تشغيل /  خصم " key={3} value="" /> 
 <Picker.Item label="تشغيل" key={1} value="تشغيل" /> 
 <Picker.Item label="خصم" key={2} value="خصم" /> 
 
@@ -282,10 +360,29 @@ value={quantity} onChangeText={e=>setQuantity(e)} style={{ opacity:1 ,right:"aut
 
       /> :null} 
 
+{Link.length >0 ?<View style={{flexDirection:"row",justifyContent:"space-around",alignItems:"baseline"}}> 
+
+<Text>حذف الصورة في حالة اردت التغيير او التراجع</Text>
+<Icon name= "delete" reverse={true}  onPress={()=>{setLink("")
+toasterExistance("تم حذف الصورة")
+}}/>
+</View> :<View style={{flexDirection:"row",justifyContent:"space-around",alignItems:"baseline"}}> 
+{/* <Text>اختار صورة الاذن</Text> */}
+      <Text>اختار من تلك الايقونة صورة الاذن</Text>
+      <Icon name= "image" reverse={true}  onPress={handleChoosePhoto}/>
+      </View> }
+
 <Button    title="تسجيل بيانات" onPress={postHandler} >تسجيل بيانات</Button> 
+{
+Link &&
+      <Image
+            source={{ uri: Link&&Link }}
+            style={{ width: 200, height: 150 }}
+          />
 
+}
 
-</View>
+</SafeAreaView>
 
 
     // </ScrollView>

@@ -11,6 +11,9 @@ import { Swipeable } from 'react-native-gesture-handler';
 import { LinearGradient } from 'expo-linear-gradient';
 import Toast from 'react-native-toast-message';
 import jwtDecode from 'jwt-decode';
+import XLSX from 'xlsx';
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
 
 import DatePicker from 'react-native-datepicker';
 import { Picker } from "@react-native-picker/picker";
@@ -29,23 +32,46 @@ const [filteredData,setFilter]=useState([])
 const [notExist,setExistense]=useState(null);
 const [queryStore,setQueryStore]=useState("")
 const getStores =useContext(storeNamesContext)
-const getter = async()=>{
-  try {
-    const AWAITER =await AsyncStorage.getItem("bigData") 
-    AWAITER.length > 0  ? setData(JSON.parse(AWAITER).filter(e=>e.store.includes(queryStore))) : console.log("ss")
-  } catch (error) {
-    setSearchQuery("")
-    const fff =await Network.getIpAddressAsync()
-    const dataFetcher = await fetch(`https://reactnativebackend.onrender.com/preview`,{method:"get"}).then(e=>e.json())
-    await AsyncStorage.setItem("bigData",JSON.stringify(dataFetcher))
-    setData(dataFetcher)
-    queryStore.length>0 ? setData(dataFetcher.filter(e=>e.store.includes(queryStore))) : ""
-        
+const [storeFetcher,setStorefetcher]=useState([])
+
+const fetchStores = async()=>{
+  await fetch(`https://reactnativebackend.onrender.com/listofstores`,{method:"get"}).then(e=>e.json()).then(e=> setStorefetcher(e))
+   
   }
+
+const getter = async()=>{
+    setSearchQuery("")
+  
+    
+    if(data.length === 0){
+      
+      const dataFetcher = await fetch(`https://reactnativebackend.onrender.com/preview`,{method:"get"}).then(e=>e.json())
+      queryStore.length>0 ? setData(dataFetcher.filter(e=>e.store.includes(queryStore))) : setData(dataFetcher)
+      console.log("No data")  
+    }else if(data.length >0) {
+    
+  
+    data.length>0 ? setData(data.filter(e=>e.store.includes(queryStore))) : setData(data)
+    console.log("yes data")  
+        }
+  
+}
+const getterRefresh = async()=>{
+  // try {
+    // const AWAITER =await AsyncStorage.getItem("bigData") 
+    // AWAITER.length > 0  ? setData(JSON.parse(AWAITER).filter(e=>e.store.includes(queryStore))) : console.log("ss")
+  // } catch (error) {
+    
+    // const fff =await Network.getIpAddressAsync()
+    const dataFetcher = await fetch(`https://reactnativebackend.onrender.com/preview`,{method:"get"}).then(e=>e.json())
+    // await AsyncStorage.setItem("bigData",JSON.stringify(dataFetcher))
+    // setData(dataFetcher)
+    queryStore.length>0 ? setData(dataFetcher.filter(e=>e.store.includes(queryStore))) : setData(dataFetcher)
+        
+  // }
   // if ()
 
 }
-
 
 async function GetToken(){
   
@@ -71,7 +97,7 @@ console.log("")
 
   
     useEffect(()=>{
-// fetchStores()
+fetchStores()
       GetToken();
         getter()   ;   
 
@@ -83,7 +109,7 @@ function filter(e){
 
     setSearchQuery(e)
 
- const datas =data.filter(e=>e.items.includes(searchQuery))
+ const datas =data.filter(e=>e.items.includes(searchQuery.trim()))
 setFilter(datas)
         
 }    
@@ -145,7 +171,7 @@ const updateOne=async (e)=>{
           },[updater,items,store,type,Quantity])
     return(
 
-<TouchableOpacity style={{backgroundColor:"#ffffff"}}>
+<TouchableOpacity style={{backgroundColor:"#ffffff",marginBottom:2}}>
 
  <View
 
@@ -158,18 +184,18 @@ const updateOne=async (e)=>{
 {updater == id?<TextInput value={itemData}  style={{height: 40,
     margin: 12,
     borderWidth: 1,
-    padding: 8 }} cursorColor="#000000" focusable={true} onChangeText={e=>setItems(e)}/>:<Text style={{marginBottom:10}}>{itemData}</Text>}
-{updater == id?<TextInput value={type}  style={{height: 40,
+    padding: 8 }} cursorColor="#000000" focusable={true} onChangeText={e=>setItems(e)}/>:<Text style={{marginBottom:10}}> {itemData}</Text>}
+{/* {updater == id?<TextInput value={type}  style={{height: 40,
     margin: 12,
     borderWidth: 1,
-    padding: 8 }} cursorColor="#000000"  onChangeText={e=>setType(e)}/>:<Text style={{marginBottom:10}}>{type}</Text>}
+    padding: 8 }} cursorColor="#000000"  onChangeText={e=>setType(e)}/>:<Text style={{marginBottom:10}}>{type}</Text>} */}
 
 
 
 {updater == id?<TextInput  defaultValue={`${quantity}`} value={quantity}  keyboardType='numeric' style={{height: 40,
     margin: 12,
     borderWidth: 1,
-    padding: 8 }} cursorColor="#000000" focusable={true} onChangeText={e=>setQuantity(e)}/>:<Text style={{marginBottom:10}}>{quantity}</Text>}
+    padding: 8 }} cursorColor="#000000" focusable={true} onChangeText={e=>setQuantity(e)}/>:<Text style={{marginBottom:10}}> بالــ {type} {quantity}</Text>}
 <View  style={{alignSelf:"center",height:50}}>
     
     {updater ==id? <Button  onPress={()=>updateOne(updater)} title="send"></Button>:<Button  onPress={()=>updating(id,itemData,store,type,quantity)} title="Update"></Button>}
@@ -195,7 +221,7 @@ const [refreshing,setRefresh]=useState(false)
 
 return (<SafeAreaView style={{width:Dimensions.get("screen"),backgroundColor:"#ffffff",flex:1
 }}>
-    
+
 <Searchbar
 style={{height:50, marginBottom:3,opacity:.9}}
       placeholder="بحث"
@@ -211,8 +237,9 @@ style={{height:50, marginBottom:3,opacity:.9}}
     setData([])
     setQueryStore(itemValue)}
   }>
-<Picker.Item label="  اختر من القائمة مصدر الوارد"  style={{height:50 , opacity:1,borderRadius:6,backgroundColor:"#fff8f5"}} enabled={false} key={1}  />
-    {getStores.storeFetcher.map(e=><Picker.Item label={e.name}  style={{height:50 , opacity:1,borderRadius:6,backgroundColor:"#fff8f5"}}  key={e._id} value={e.name} />)}
+
+<Picker.Item label="  كل المخازن"  style={{height:50 , opacity:1,borderRadius:6,backgroundColor:"#fff8f5"}} enabled={true} value="" key={1}  />
+    {storeFetcher.map(e=><Picker.Item label={e.name}  style={{height:50 , opacity:1,borderRadius:6,backgroundColor:"#fff8f5"}}  key={e._id} value={e.name} />)}
 
 
 
@@ -220,11 +247,11 @@ style={{height:50, marginBottom:3,opacity:.9}}
 
     
 {data.length>0 ?<FlatList
-contentContainerStyle={{ paddingBottom: 20 }}
+
 refreshing={refreshing}
 ItemSeparatorComponent={<LinearGradient colors={["#8e9eab","#eef2f3"]} ><View style={{height:2}}></View></LinearGradient>}
-onRefresh={()=>setData([...data])}
-data={searchQuery.length>0 && filteredData ?filteredData:data}
+onRefresh={getterRefresh}
+data={searchQuery.length>0 && filteredData ?filteredData.reverse():data.reverse()}
 renderItem={e=> <ItemComponents    id={e.item._id} itemData={e.item.items} quantity={e.item.quantity} store={e.item.store} type={e.item.type } />}
 keyExtractor={(e,index)=>e._id}/>
 :<View><Text> <ActivityIndicator color="red" size="large" />

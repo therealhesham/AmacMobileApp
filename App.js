@@ -28,6 +28,7 @@ import ExpoStatusBar from 'expo-status-bar/build/ExpoStatusBar';
 import axios from 'axios';
 // import { KeyboardAvoidingView } from 'react-native-web';
 import Toast from 'react-native-toast-message';
+import { Icon } from '@rneui/themed';
 
 
 const BASE_URL =process.env.REACT_APP_BASE_URL;
@@ -70,7 +71,7 @@ try {
     }
     // setTimeout (()=>GetToken,1000) 
     useEffect(()=>{
-fetchStores()
+// fetchStores()
       GetToken()
          }
       
@@ -93,7 +94,7 @@ fetchStores()
 try {
     
     const {data} =await axios.post(`https://reactnativebackend.onrender.com/login`,{email,password})
-    if (data === "dataNotFound") return toasterExistance("Email or Password isn't registered ")
+    if (data === "dataNotFound") return toasterExistance("Email or Password isn't registered")
     await AsyncStorage.setItem("authToken",data.authtoken)
 // props.navigation.navigate("Home")
 
@@ -186,7 +187,7 @@ function LoggedComponent (props){
           }} >
         
         
-        <Drawer.Screen name='Home' options={{drawerType:"slide"}} component={PreviewPages} />
+        <Drawer.Screen name='Home' options={{drawerType:"slide"}}  component={PreviewPages} />
         
         <Drawer.Screen name='ادخال اذن وارد' component={FirstTransaction} />
         <Drawer.Screen name="ادخال اذن منصرف" component={Secondtransaction} />
@@ -194,6 +195,7 @@ function LoggedComponent (props){
         {/* <Drawer.Screen name="Login" component={Login} */}
         <Drawer.Screen name="ادخال اذن مرتجع " component={Fourth}  />
         <Drawer.Screen name="اضافة مهام الى المخزن" component={PostNewDataToMainWarehouse} />
+      
       
         
         
@@ -230,6 +232,7 @@ function LoginInComponent (){
   // {authName?<NavigationContainer independent={true}><Stack.Screen  name='Login' component={Login}/></NavigationContainer>:
 
 
+
 return (
 //
  
@@ -239,7 +242,7 @@ return (
 
 <LoggedComponent logs={{Logger,setLogger}}/>:
 <auth.Provider value={{user,setUser}}>
-<SafeAreaView style={{backgroundColor:"white"}}>
+<SafeAreaView style={{backgroundColor:"#ffffff"}}>
 { notExist ? <Toast 
         position='top'
         topOffset={ StatusBar && StatusBar.currentHeight ? StatusBar.currentHeight+2 : 5} 
@@ -248,8 +251,8 @@ return (
     {/* <TouchableOpacity style={{backgroundColor:"white"}}> */}
  <KeyboardAvoidingView   behavior="position" keyboardVerticalOffset={200} style={styles.container}>
  <View style={{alignItems:"center",flexDirection:"column"}} ><Image style={{width:100,height:101,marginBottom:1,zIndex:-2000}} source={require('./assets/download.jpg')}  /></View>
- <TextInput  autoFocus
-  placeholder= "  Email"  value={email} onChangeText={(e)=>setEmail(e)}
+ <TextInput  autoFocus 
+  placeholder= " Email"  value={email} onChangeText={(e)=>setEmail(e.toLowerCase())}
   style={{  borderRadius:19, backgroundColor: "lavender" , width:300 , height:35 , marginBottom:10}} secureTextEntry={false} />   
  <TextInput placeholder="  Password" value={password} 
  onChangeText={(e)=>setPassword(e)} 
@@ -275,7 +278,7 @@ return (
 // }
 // }) 
 const styles = StyleSheet.create({
-  container: {paddingTop: Dimensions.get("screen").height/3,width:100,paddingLeft: 20 , flexDirection:"column",alignItems:"flex-start",backgroundColor:"white"
+  container: {paddingTop: Dimensions.get("screen").height/3,width:Dimensions.get("window").width, flexDirection:"column",alignItems:"center",backgroundColor:"white"
 
 },ImageBackground:{
     width:"300 px",

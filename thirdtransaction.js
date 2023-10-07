@@ -4,7 +4,7 @@ import { Picker } from "@react-native-picker/picker";
 import axios from "axios";
 import jwtDecode from "jwt-decode";
 import { useContext, useEffect, useState } from "react";
-
+import * as ImagePicker from 'expo-image-picker';
 import { Button, FlatList, KeyboardAvoidingView, Modal, SafeAreaView, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -13,13 +13,19 @@ import ListComponen from "./firsttransactionmemo";
 import {  Searchbar } from 'react-native-paper'
 import { ScrollView } from "react-native";
 import { Alert } from "react-native";
+import { Icon } from "@rneui/themed";
+import RNDateTimePicker from "@react-native-community/datetimepicker";
+import { Image } from "react-native";
 
 
 
 
 export default function Thirdtransaction (){
 const [from , setFrom]= useState("")
-const [date,setDate]=useState("")
+const ss=new Date()
+const [date, setDate] = useState(ss);
+const [mode, setMode] = useState('date');
+
 const [to,setTo]=useState("")
 const [items,setItems]=useState("")
 const [toList ,setToList] = useState([]);
@@ -35,6 +41,8 @@ const [searchQuery, setSearchQuery] = useState("");
 const [data,setData]=useState([]);
 const [storeaNames,setStoreNames]=useState([])
 const [searchedData,setSearchData]=useState([]);
+const [show, setShow] = useState(false);
+const [Link,setLink]=useState(""); 
 
     // Toast.hide({text1:done,type:"success"})
   const fetchDate  =async()=>{
@@ -64,10 +72,10 @@ try {
 if (!details.isAdmin) return toasterExistance("only Admins can change and add new data")
 
   
-if (!from ||  !to || !quantity || !type || !items || !receipt ) return  toasterExistance("رجاء ملىء البيانات")
+if (!from ||  !to || !quantity || !type || !date|| !items || !receipt ) return  toasterExistance("رجاء ملىء البيانات")
 if (from === to )   return toasterExistance("غير المخزن المحول منه او له") ;
 
- await axios.post(`${process.env.REACT_APP_BASE_URL}/thirdtransaction`,{receiptno:receipt,date:date,from:from,to:to,items:items,unit:type,quantity:quantity}).then(e=>
+ await axios.post(`${process.env.REACT_APP_BASE_URL}/thirdtransaction`,{receiptno:receipt,date:date,file:Link,from:from,to:to,items:items,unit:type,quantity:quantity}).then(e=>
     e.data == "error" ? toasterExistance("  خطأ في التسجيل ... المهام غير متاحة بالمخزن المحول اليه او قد يكون الكمية في المخزن المحول منه اقل من المطلوب ") : toasterDone("تم تسجيل البيانات بنجاح"))
  }catch (error) {
 
@@ -112,10 +120,10 @@ setSearchQuery("")
     
 
 }
-Toast.show({
-    type: 'info',
-    text1: done
-  })
+// Toast.show({
+//     type: 'info',
+//     text1: done
+  // })
 function alertComponent(){ 
   Alert.alert("تنبيه","المهام غير موجودة باحد المخزنين ..  في حالة تأكدك من وجودهما الفعلي .. قد يكون هذا الخطأ ناتج عن تسجيل نفس المهام باسماء مختلفة لذا راجع فريق الدعم الفني",[
     {
@@ -153,17 +161,79 @@ if (!al  || !as) return alertComponent();
     
         setSearchData(mapper)
             }
+    const setDsate = (event, e) => {
     
-    // specificitems.length=10
+    if(event.type == "set") {
+      
+      setDate(e)
+      //ok button clicked
+      setShow(false)
+      // DateTimePickerAndroid.dismiss({mode: AndroidNativeProps['mode']})
+  } else {
+      //cancel button clicked
+  }
+   
+  };
+  const createFormData = (photo) => {
+    const data = new FormData();
+    data.append("file", {uri:photo,type:"test/jpg",name:"amacphoto"});
+    data.append(
+      "upload_preset",
+      "z8q1vykv"
+    );
+    data.append("cloud_name","duo8svqci");
+    data.append("folder", "samples");
+    
+    
+    
+  
+    return data
+  };
+  
+  
+  const handleChoosePhoto = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      // allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+  
+    
+  
+    if (!result.canceled) {
+      
+      await fetch(`https://api.cloudinary.com/v1_1/duo8svqci/image/upload`, {
+        method: 'POST',
+        body: createFormData(result.assets[0].uri),
+      })
+        .then((response) => response.json())
+        .then((response) => {
+          setLink(response.url);
+          toasterExistance("تم رفع صورة الاذن الى قاعدة البيانات")
+        })
+        .catch((error) => {
+          console.log('error', error);
+        });
+    };
+  }    
+
 return (
     // <ScrollView horizontal={false} style={{flex: 1}}> 
     <View style={{backgroundColor:"#ffffff",padding:30,flex:1}}>
 
-<TextInput placeholder="رقم الاذن" keyboardType="numeric" value={receipt}  onChangeText={e=>setReceipt(e)}/>
+<TextInput placeholder="رقم الاذن"  keyboardType="numeric" value={receipt}  onChangeText={e=>setReceipt(e)}/>
+<Text style={{alignSelf:"flex-start",color:"black",alignItems:"baseline"}} >
+{show &&<RNDateTimePicker mode={mode} onChange={
+  
+  (e,s)=>{ 
+    
+    setShow(false)
+  setDsate(e,s)}} value={date} /> }
+<Icon name="calendar-today" style={{paddingTop:2}} onPress={()=>setShow(true)} />
+{date?<Text>{date.toLocaleDateString()}</Text>:""}
+</Text>
 
-
-<TextInput  autoFocus placeholder="التاريخ"  keyboardType="default" style={{ opacity:1 ,right:"auto",height:50 , opacity:1,borderRadius:6,backgroundColor:"#fff8f5"}}  
-   value={date} onChange={e=>setDate(e)}/>
 <Picker selectedValue={from}
 
 onValueChange={(value)=>{
@@ -225,11 +295,12 @@ onClearIconPress={()=>{
 
 <View >
   <FlatList
-          // scrollEnabled={true}
+      
+      // scrollEnabled={true}
   // horizontal={true}
   initialNumToRender={10}
   
-   style={{ backgroundColor:"white",paddingTop:2,zIndex:10,elevation:50}} 
+   style={{ backgroundColor:"#ffffff",paddingTop:2,zIndex:10,elevation:50}} 
 keyExtractor={(e,index)=>e._id}
 data={searchedData.length > 0 ?searchedData:[]}
 renderItem={e=> <ListComponen uniteGetter={(e,d)=>uniteGetter(e,d)} setSpecificItem={setToGetSpecificITems} id={e.item._id}  key={e.item._id} item={e.item.items}/> }/>
@@ -244,7 +315,28 @@ renderItem={e=> <ListComponen uniteGetter={(e,d)=>uniteGetter(e,d)} setSpecificI
 
 <TextInput placeholder="الكمية" keyboardType="numeric"  value={quantity} onChangeText={(e)=>setQuantity(e)}/>
 
-    <TouchableOpacity style={{paddingTop:20}}><Button color="#D71313" title="تسجيل البيانات"   onPress={postHandler}/></TouchableOpacity>
+
+
+    {Link.length >0 ?<View style={{flexDirection:"row",justifyContent:"space-around",alignItems:"baseline"}}> 
+
+<Text>حذف الصورة في حالة اردت التغيير او التراجع</Text>
+<Icon name= "delete" reverse={true}  onPress={()=>{setLink("")
+toasterExistance("تم حذف الصورة")
+}}/>
+</View> :<View style={{flexDirection:"row",justifyContent:"space-around",alignItems:"baseline"}}> 
+{/* <Text>اختار صورة الاذن</Text> */}
+      <Text>اختار من تلك الايقونة صورة الاذن</Text>
+      <Icon name= "image" reverse={true}  onPress={handleChoosePhoto}/>
+      </View> }
+      <Button color="red" title="تسجيل البيانات" onPress={postHandler} /> 
+{
+Link &&
+      <Image
+            source={{ uri: Link&&Link }}
+            style={{ width: 200, height: 150 }}
+          />
+
+}
 
     
 { notExist ? <Toast onPress={()=>Toast.hide()}

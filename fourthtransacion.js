@@ -154,10 +154,10 @@ return(
     <View style={{flex: 1,padding:10}}> 
     
 
-<TextInput placeholder="رقم الاذن" value={receipt} onChangeText={e=>setReceipt(e)}/>
+<TextInput placeholder="رقم الاذن" style={{height:40,backgroundColor:"#fff8f5"}} value={receipt} onChangeText={e=>setReceipt(e)}/>
 
 <TextInput  autoFocus placeholder="التاريخ"  keyboardType="default" style={{ opacity:1 ,right:"auto",height:50 , opacity:1,borderRadius:6,backgroundColor:"#fff8f5"}}  
-   value={date} onChange={e=>setDate(e.persist())}/>
+   value={date} onChangeText={e=>setDate(e)}/>
 
 <Picker
 
